@@ -1,0 +1,5 @@
+username: "root"
+password: "hdbdn"
+host:     "mysql.douyin.svc.cluster.local"
+port:     30306
+dbname:   "simplifiedTikTok"
