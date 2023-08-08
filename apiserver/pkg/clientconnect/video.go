@@ -8,7 +8,7 @@ import (
 
 var PublishActionChan chan videoservice.PublishActionServiceClient
 var PublishListChan chan videoservice.PublishListServiceClient
-var videoAddr = ":8003"
+var videoAddr = "121.41.123.39:30828"
 
 func init() {
 	coon, _ := grpc.Dial(videoAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))

@@ -16,7 +16,7 @@ func main() {
 	userservice.RegisterLoginServiceServer(server, userservice.LoginService)
 	userservice.RegisterUserServiceServer(server, userservice.UserService)
 
-	listener, err := net.Listen("tcp", ":8002")
+	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatalf("启动监听出错: %v", err)
 	}

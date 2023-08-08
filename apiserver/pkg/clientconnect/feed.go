@@ -8,7 +8,7 @@ import (
 
 var FeedChan chan feedservice.FeedServiceClient
 
-var feedAddr = ":8004"
+var feedAddr = "121.41.123.39:30838"
 
 func init() {
 	coon, _ := grpc.Dial(feedAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))

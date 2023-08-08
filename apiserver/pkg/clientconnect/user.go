@@ -9,7 +9,7 @@ import (
 var UserRegisterChan chan userservice.RegisterServiceClient
 var UserLoginChan chan userservice.LoginServiceClient
 var UserChan chan userservice.UserServiceClient
-var userAddr = ":8002"
+var userAddr = "121.41.123.39:30818"
 
 func init() {
 	conn, _ := grpc.Dial(userAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))

@@ -4,11 +4,8 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-sql-driver/mysql v1.7.1
-	github.com/golang-jwt/jwt/v5 v5.0.0
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

@@ -5,17 +5,16 @@ import (
 	"log"
 	"net"
 
-	"github.com/micro/simplifiedTikTok/videoservice/pkg/videoservice"
+	"github.com/micro/simplifiedTikTok/feedservice/pkg/feedservice"
 	"google.golang.org/grpc"
 )
 
 func main() {
 	server := grpc.NewServer()
 
-	videoservice.RegisterPublishActionServiceServer(server, videoservice.PublishActionService)
-	videoservice.RegisterPublishListServiceServer(server, videoservice.PublishListService)
+	feedservice.RegisterFeedServiceServer(server, feedservice.FeedService)
 
-	listener, err := net.Listen("tcp", ":8003")
+	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatalf("启动监听出错: %v", err)
 	}
