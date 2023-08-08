@@ -107,7 +107,7 @@ func (pA *publishActionService) PublishAction(context context.Context, request *
 	
 	return &DouYinPublishActionResponse{
 		StatusCode: 0,
-		StatusMsg: "保存视频成功",
+		StatusMsg: "保存视频成功:"+fileName,
 	}, nil
 
 }

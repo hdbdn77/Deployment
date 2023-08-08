@@ -65,7 +65,7 @@ func Feed(c *gin.Context) {
 				WorkCount: video.Author.WorkCount,
 				FavoriteCount: video.Author.FavoriteCount,
 			},
-			PlayUrl: "https://www.w3schools.com/html/movie.mp4",
+			PlayUrl: "http://121.41.85.100:30808/" + video.PlayUrl,
 			CoverUrl: "http://5b0988e595225.cdn.sohucs.com/images/20180430/fcf555aed1804ad586b24b3aeda6c031.jpeg",
 			FavoriteCount: video.FavoriteCount,
 			CommentCount: video.CommentCount,

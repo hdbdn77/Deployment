@@ -1,2 +1,2 @@
-addr:	    "redis.douyin.svc.cluster.local:6379"
+addr:	    "redis:6379"
 password: ""

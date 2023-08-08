@@ -13,7 +13,7 @@ import (
 
 func Register(c *gin.Context) {
 	var userLoginRequest UserLoginRequest
-	err := c.ShouldBindQuery(&userLoginRequest)
+	err := c.ShouldBind(&userLoginRequest)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{
@@ -69,7 +69,7 @@ func Register(c *gin.Context) {
 
 func Login(c *gin.Context) {
 	var userLoginRequest UserLoginRequest
-	err := c.ShouldBindQuery(&userLoginRequest)
+	err := c.ShouldBind(&userLoginRequest)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{

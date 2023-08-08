@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"io"
 	"bytes"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -44,7 +45,10 @@ func Publish(c *gin.Context) {
 		})
 		return
 	}
-	
+	if publishActionResponse.StatusCode == 0 {
+		fileName := strings.Replace(publishActionResponse.StatusMsg, "保存视频成功:", "", 1)
+		go c.SaveUploadedFile(publishRequest.Data, "static/" + fileName)
+	}
 	c.JSON(http.StatusOK, Response{
 		StatusCode: publishActionResponse.StatusCode,
 		StatusMsg: publishActionResponse.StatusMsg,
@@ -54,7 +58,7 @@ func Publish(c *gin.Context) {
 
 func PublishList(c *gin.Context) {
 	var publishListRequest PublishListRequest
-	err := c.ShouldBind(&publishListRequest)
+	err := c.ShouldBindQuery(&publishListRequest)
 	if err != nil {
 		c.JSON(http.StatusOK, PublishListResponse{
 			Response : Response{
@@ -107,7 +111,7 @@ func PublishList(c *gin.Context) {
 				WorkCount: video.Author.WorkCount,
 				FavoriteCount: video.Author.FavoriteCount,
 			},
-			PlayUrl: "https://www.w3schools.com/html/movie.mp4",
+			PlayUrl: "http://121.41.85.100:30808/" + video.PlayUrl,
 			CoverUrl: "http://5b0988e595225.cdn.sohucs.com/images/20180430/fcf555aed1804ad586b24b3aeda6c031.jpeg",
 			FavoriteCount: video.FavoriteCount,
 			CommentCount: video.CommentCount,

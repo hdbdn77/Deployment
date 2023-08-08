@@ -6,6 +6,7 @@ import (
 )
 
 func InitRouter(r *gin.Engine) {
+	r.Static("/static", "static/")
 	apiRouter := r.Group("/douyin")
   
 	// basic apis
