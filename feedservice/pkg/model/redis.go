@@ -12,7 +12,7 @@ func AddVideoToList(listName string,jsonStr []byte) error {
 	client := dao.GetClient()
 	ctx := context.Background()
 	// 检查list长度是否超过30
-	len, err := GetVideoListSize("listName")
+	len, err := GetVideoListSize(listName)
 	if err == redis.Nil {
 		// 列表不存在,先创建
 		if _, err := client.RPush(ctx, listName, jsonStr).Result(); err != nil {
