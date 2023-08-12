@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/micro/simplifiedTikTok/userservice/pkg/dao"
+	_"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
 	"gorm.io/gorm"
 )
 
@@ -39,54 +39,118 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
-func Register(user *User) (*User, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func Register(user *User, tx *gorm.DB) (*User, error) {
 	// 迁移模型
-	db.AutoMigrate(&User{})
+	tx.AutoMigrate(&User{})
 
 	// 创建
-	err := db.Create(user).Error
+	err := tx.Create(user).Error
 	return user, err
 }
 
-func FindUserByUsername(user *User) (*User, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func FindUserByUsername(user *User, tx *gorm.DB) (*User, error) {
 	// 迁移模型
-	db.AutoMigrate(&User{})
+	tx.AutoMigrate(&User{})
 
 	// 查询
-	err := db.Where("username = ?", user.Username).Take(&user).Error
+	err := tx.Where("username = ?", user.Username).Take(&user).Error
 	return user, err
 }
 
-func FindUserById(user *User) (*User, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func FindUserById(user *User, tx *gorm.DB) (*User, error) {
 	// 迁移模型
-	db.AutoMigrate(&User{})
+	tx.AutoMigrate(&User{})
 
 	// 查询
-	err := db.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Where("id = ?", user.Id).Take(&user).Error
 	return user, err
 }
 
-func AddWorkCount(user *User) (*User, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func AddTotalFavorited(user *User, tx *gorm.DB) (*User, error) {
 	// 迁移模型
-	db.AutoMigrate(&User{})
+	tx.AutoMigrate(&User{})
 
-	err := db.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	if err != nil {
+		fmt.Println("增加获赞总数时查找用户失败：", err)
+		return nil, err
+	}
+
+	err = tx.Model(user).Update("total_favorited", user.TotalFavorited + 1).Error
+	if err != nil {
+		fmt.Println("增加获赞总数失败：", err)
+		return nil, err
+	}
+	return user, nil
+}
+
+func MinusTotalFavorited(user *User, tx *gorm.DB) (*User, error) {
+	// 迁移模型
+	tx.AutoMigrate(&User{})
+
+	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	if err != nil {
+		fmt.Println("减少获赞总数时查找用户失败：", err)
+		return nil, err
+	}
+
+	err = tx.Model(user).Update("total_favorited", user.TotalFavorited - 1).Error
+	if err != nil {
+		fmt.Println("减少获赞总数失败：", err)
+		return nil, err
+	}
+	return user, nil
+}
+
+func AddWorkCount(user *User, tx *gorm.DB) (*User, error) {
+	// 迁移模型
+	tx.AutoMigrate(&User{})
+
+	err := tx.Where("id = ?", user.Id).Take(&user).Error
 	if err != nil {
 		fmt.Println("更新作品总数时查找用户失败：", err)
 		return nil, err
 	}
 
-	err = db.Model(user).Update("work_count", user.WorkCount + 1).Error
+	err = tx.Model(user).Update("work_count", user.WorkCount + 1).Error
 	if err != nil {
 		fmt.Println("更新作品总数失败：", err)
+		return nil, err
+	}
+	return user, nil
+}
+
+func AddUserFavoriteCount(user *User, tx *gorm.DB) (*User, error) {
+	// 迁移模型
+	tx.AutoMigrate(&User{})
+
+	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	if err != nil {
+		fmt.Println("增加点赞总数时查找用户失败：", err)
+		return nil, err
+	}
+
+	err = tx.Model(user).Update("favorite_count", user.FavoriteCount + 1).Error
+	if err != nil {
+		fmt.Println("增加点赞总数失败：", err)
+		return nil, err
+	}
+	return user, nil
+}
+
+func MinusUserFavoriteCount(user *User, tx *gorm.DB) (*User, error) {
+	// 迁移模型
+	tx.AutoMigrate(&User{})
+
+	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	if err != nil {
+		fmt.Println("减少点赞总数时查找用户失败：", err)
+		return nil, err
+	}
+
+	err = tx.Model(user).Update("favorite_count", user.FavoriteCount - 1).Error
+	if err != nil {
+		fmt.Println("减少点赞总数失败：", err)
 		return nil, err
 	}
 	return user, nil

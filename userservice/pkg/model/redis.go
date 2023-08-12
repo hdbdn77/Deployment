@@ -4,7 +4,7 @@ import(
 	"errors"
 	"context"
 
-	"github.com/micro/simplifiedTikTok/userservice/pkg/dao"
+	"github.com/micro/simplifiedTikTok/commentservice/pkg/dao"
 	"github.com/redis/go-redis/v9"
 )
 

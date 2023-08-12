@@ -42,7 +42,7 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{
 				StatusCode: -1,
-				StatusMsg: "register err",
+				StatusMsg: "register failed",
 			},
 		})
 		return
@@ -89,7 +89,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{
 				StatusCode: -1,
-				StatusMsg: "login err",
+				StatusMsg: "login failed",
 			},
 		})
 		return
@@ -136,7 +136,7 @@ func UserInfo(c *gin.Context) {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{
 				StatusCode: -1,
-				StatusMsg: "user info err",
+				StatusMsg: "user info failed",
 			},
 		})
 		return

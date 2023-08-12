@@ -7,6 +7,7 @@ import (
 
 	"github.com/micro/simplifiedTikTok/feedservice/pkg/model"
 	"github.com/micro/simplifiedTikTok/feedservice/pkg/utils"
+	"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
 )
 
 var FeedService = &feedService{}
@@ -16,6 +17,7 @@ type feedService struct {}
 func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) (*DouYinFeedResponse, error) {
 	//实现具体的业务逻辑
 	// 检查token是否有效
+	var userId int64 = -1
 	if request.Token != "" {
 		claims, _ := utils.ParseToken(request.Token)
 		if (claims == nil) {
@@ -26,7 +28,10 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 				NextTime: time.Now().Unix(),
 			}, nil
 		}
+		userId = claims.ID
 	}
+
+	db := dao.GetDB()
 
 	//从redis中获取video缓存列表
 	if request.LatestTime == 0 {
@@ -54,10 +59,14 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 		for i := 0; i < int(len); i++ {
 			var video Video
 			json.Unmarshal([]byte(videos[i]), &video)
+			if userId != -1 {
+				isFavorite := model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
+				video.IsFavorite = isFavorite
+			}
 			videoList = append(videoList, &video)
 
 			if i == 0 {
-				newVideo , err:= model.GetVideoById(video.Id)
+				newVideo , err:= model.GetVideoById(video.Id, db)
 				if err != nil {
 					return &DouYinFeedResponse{
 						StatusCode: -2,
@@ -79,7 +88,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 	}
 
 	//查询mysql
-	videos, err := model.ListVideoByTime(request.LatestTime)
+	videos, err := model.ListVideoByTime(request.LatestTime, db)
 	if err != nil {
 		return &DouYinFeedResponse{
 			StatusCode: -2,
@@ -90,7 +99,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 	}
 	var videoList []*Video
 	for _, video := range *videos {
-		user , err := model.FindUserById(&model.User{Id: video.AuthorId})
+		user , err := model.FindUserById(&model.User{Id: video.AuthorId}, db)
 		if err != nil {
 			return &DouYinFeedResponse{
 				StatusCode: -2,
@@ -98,6 +107,10 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 				VideoList: nil,
 				NextTime: time.Now().Unix(),
 			}, nil
+		}
+		var isFavorite bool
+		if userId != -1 {
+			isFavorite = model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
 		}
 		videoList = append(videoList, &Video{
 			Id: video.Id,
@@ -118,7 +131,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 			CoverUrl: video.CoverUrl,
 			FavoriteCount: video.FavoriteCount,
 			CommentCount: video.CommentCount,
-			IsFavorite: video.IsFavorite,
+			IsFavorite: isFavorite,
 			Title: video.Title,
 		})
 	}

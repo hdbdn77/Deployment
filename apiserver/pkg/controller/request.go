@@ -35,3 +35,29 @@ type FeedRequest struct {
 	LatestTime string `form:"latest_time"`
 	Token string `form:"token"`
 }
+
+// favorite request
+type FavoriteActionRequest struct {
+	Token string `form:"token" binding:"required"`
+	VideoId string `form:"video_id" binding:"required"`
+	ActionType string `form:"action_type" binding:"required"`
+}
+
+type FavoriteListRequest struct {
+	UserId string `form:"user_id" binding:"required"`
+	Token string `form:"token" binding:"required"`
+}
+
+// comment request
+type CommentActionRequest struct {
+	Token string `form:"token" binding:"required"`
+	VideoId string `form:"video_id" binding:"required"`
+	ActionType string `form:"action_type" binding:"required"`
+	CommentText string `form:"comment_text"`
+	CommentId string `form:"comment_id"`
+}
+
+type CommentListRequest struct {
+	Token string `form:"token" binding:"required"`
+	VideoId string `form:"video_id" binding:"required"`
+}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/micro/simplifiedTikTok/userservice/pkg/model"
 	"github.com/micro/simplifiedTikTok/userservice/pkg/utils"
+	"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
 )
 
 var RegisterService = &registerService{}
@@ -18,8 +19,8 @@ type userService struct {}
 
 func (r *registerService) Register(context context.Context, request *DouYinUserRegisterRequest) (*DouYinUserRegisterResponse, error){
 	//实现具体的业务逻辑
-	
-	user , err := model.Register(&model.User{Username: request.Username, Password: request.Password})
+	db := dao.GetDB()
+	user , err := model.Register(&model.User{Username: request.Username, Password: request.Password}, db)
 	token, _ := utils.GenToken(user.Id, user.Username)
 	if err != nil {
 		fmt.Println(err)
@@ -41,7 +42,8 @@ func (r *registerService) Register(context context.Context, request *DouYinUserR
 }
 
 func (l *loginService) Login(context context.Context, request *DouYinUserLoginRequest) (*DouYinUserLoginResponse, error){
-	user , err := model.FindUserByUsername(&model.User{Username: request.Username, Password: request.Password})
+	db := dao.GetDB()
+	user , err := model.FindUserByUsername(&model.User{Username: request.Username, Password: request.Password}, db)
 	if err != nil {
 		fmt.Println(err)
 		return &DouYinUserLoginResponse{
@@ -79,7 +81,8 @@ func (u *userService) Find(context context.Context, request *DouYinUserRequest) 
 			User: nil,
 		}, nil
 	}
-	user , err := model.FindUserByUsername(&model.User{Username: claims.Username})
+	db := dao.GetDB()
+	user , err := model.FindUserByUsername(&model.User{Username: claims.Username}, db)
 	if err != nil {
 		fmt.Println(err)
 		return &DouYinUserResponse{

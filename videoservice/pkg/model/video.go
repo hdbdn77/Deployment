@@ -3,9 +3,10 @@ package model
 import (
 	_ "errors"
 	"time"
+	"fmt"
 
-	"github.com/micro/simplifiedTikTok/videoservice/pkg/dao"
-	_ "gorm.io/gorm"
+	_"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
+	"gorm.io/gorm"
 )
 
 type Video struct {
@@ -24,50 +25,110 @@ func (Video) TableName() string {
     return "video" 
 }
 
-func CreateVideo(video *Video) (*Video, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func CreateVideo(video *Video, tx *gorm.DB) (*Video, error) {
 	// 迁移模型
-	db.AutoMigrate(&Video{})
+	tx.AutoMigrate(&Video{})
 
 	// 创建
 	video.PublishTime = time.Now().Unix()
-	err := db.Create(video).Error
+	err := tx.Create(video).Error
 	return video, err
 }
 
-func ListVideoByAuthorId(authorId int64) (*[]Video, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func ListVideoByAuthorId(authorId int64, tx *gorm.DB) (*[]Video, error) {
 	// 迁移模型
-	db.AutoMigrate(&Video{})
+	tx.AutoMigrate(&Video{})
 
 	//查询
 	var videos []Video
-	err := db.Where("author_id = ?", authorId).Find(&videos).Error
+	err := tx.Where("author_id = ?", authorId).Find(&videos).Error
 	return &videos, err
 
 }
 
-func GetVideoById(id int64) (*Video, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func GetVideoById(id int64, tx *gorm.DB) (*Video, error) {
 	// 迁移模型
-	db.AutoMigrate(&Video{})
+	tx.AutoMigrate(&Video{})
 
 	var video Video
-	err := db.Where("id = ?", id).Take(&video).Error
+	err := tx.Where("id = ?", id).Take(&video).Error
 	return &video, err
 }
 
-func ListVideoByTime(time int64) (*[]Video, error) {
-	// 获取数据库连接
-	db := dao.GetDB()
+func ListVideoByTime(time int64, tx *gorm.DB) (*[]Video, error) {
 	// 迁移模型
-	db.AutoMigrate(&Video{})
+	tx.AutoMigrate(&Video{})
 
 	//查询
 	var videos []Video
-	err := db.Where("publish_time < ?", time).Order("publish_time asc").Limit(30).Find(&videos).Error
+	err := tx.Where("publish_time < ?", time).Order("publish_time desc").Limit(30).Find(&videos).Error
 	return &videos, err
+}
+
+func AddViseoFavoriteCount(video *Video, tx *gorm.DB) (*Video, error) {
+	// 迁移模型
+	tx.AutoMigrate(&Video{})
+
+	err := tx.Where("id = ?", video.Id).Take(video).Error
+	if err != nil {
+		fmt.Println("增加视频获赞总数时查找视频失败：", err)
+		return nil, err
+	}
+	err = tx.Model(video).Update("favorite_count", video.FavoriteCount + 1).Error
+	if err != nil {
+		fmt.Println("增加视频获赞总数失败：", err)
+		return nil, err
+	}
+	return video, nil
+}
+
+func MinusViseoFavoriteCount(video *Video, tx *gorm.DB) (*Video, error) {
+	// 迁移模型
+	tx.AutoMigrate(&Video{})
+
+	err := tx.Where("id = ?", video.Id).Take(video).Error
+	if err != nil {
+		fmt.Println("减少视频获赞总数时查找视频失败：", err)
+		return nil, err
+	}
+	err = tx.Model(video).Update("favorite_count", video.FavoriteCount - 1).Error
+	if err != nil {
+		fmt.Println("减少视频获赞总数失败：", err)
+		return nil, err
+	}
+	return video, nil
+}
+
+func AddVideoCommentCount(video *Video, tx *gorm.DB) (*Video, error) {
+	// 迁移模型
+	tx.AutoMigrate(&Video{})
+
+	err := tx.Where("id = ?", video.Id).Take(video).Error
+	if err != nil {
+		fmt.Println("增加视频评论总数时查找视频失败：", err)
+		return nil, err
+	}
+	err = tx.Model(video).Update("comment_count", video.CommentCount + 1).Error
+	if err != nil {
+		fmt.Println("增加视频评论总数失败：", err)
+		return nil, err
+	}
+	return video, nil
+}
+
+func MinusVideoCommentCount(video *Video, tx *gorm.DB) (*Video, error) {
+	// 迁移模型
+	tx.AutoMigrate(&Video{})
+
+	err := tx.Where("id = ?", video.Id).Take(video).Error
+	if err != nil {
+		fmt.Println("减少视频评论总数时查找视频失败：", err)
+		return nil, err
+	}
+	err = tx.Model(video).Update("comment_count", video.CommentCount - 1).Error
+	if err != nil {
+		fmt.Println("减少视频评论总数失败：", err)
+		return nil, err
+	}
+	return video, nil
 }

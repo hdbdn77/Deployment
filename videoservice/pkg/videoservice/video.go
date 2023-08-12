@@ -1,4 +1,5 @@
 package videoservice
+
 import (
 	"context"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/micro/simplifiedTikTok/videoservice/pkg/model"
 	"github.com/micro/simplifiedTikTok/videoservice/pkg/utils"
+	"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
 )
 
 var PublishActionService = &publishActionService{}
@@ -50,10 +52,14 @@ func (pA *publishActionService) PublishAction(context context.Context, request *
 			StatusMsg: "缓冲区的数据写入磁盘出错",
 		}, nil
 	}
+
+	db := dao.GetDB()
+	tx := db.Begin()
 	// 保存数据至mysql
 	video := model.Video{AuthorId: claims.ID, PlayUrl: filePath, Title: request.Title}
-	newVideo, err := model.CreateVideo(&video)
+	newVideo, err := model.CreateVideo(&video, tx)
 	if err != nil {
+		tx.Rollback()
 		return &DouYinPublishActionResponse{
 			StatusCode: -2,
 			StatusMsg: "保存视频出错",
@@ -61,11 +67,20 @@ func (pA *publishActionService) PublishAction(context context.Context, request *
 	}
 
 	user := model.User{Id: claims.ID}
-	newUser, err := model.AddWorkCount(&user)
+	newUser, err := model.AddWorkCount(&user, tx)
 	if err != nil {
+		tx.Rollback()
 		return &DouYinPublishActionResponse{
 			StatusCode: -2,
 			StatusMsg: "保存视频作者出错",
+		}, nil
+	}
+	err = tx.Commit().Error
+	if err != nil {
+		tx.Rollback()
+		return &DouYinPublishActionResponse{
+			StatusCode: -2,
+			StatusMsg: "保存视频出错",
 		}, nil
 	}
 
@@ -122,7 +137,9 @@ func (pL *publishListService) PublishList(context context.Context, request *DouY
 		}, nil
 	}
 
-	videos, err := model.ListVideoByAuthorId(request.UserId)
+	db := dao.GetDB()
+
+	videos, err := model.ListVideoByAuthorId(request.UserId, db)
 	if err != nil {
 		return &DouYinPublishListResponse{
 			StatusCode: -2,
@@ -133,7 +150,7 @@ func (pL *publishListService) PublishList(context context.Context, request *DouY
 
 	var videoList []*Video
 	for _, video := range *videos {
-		user , err := model.FindUserById(&model.User{Id: video.AuthorId})
+		user , err := model.FindUserById(&model.User{Id: video.AuthorId}, db)
 		if err != nil {
 			return &DouYinPublishListResponse{
 				StatusCode: -2,
@@ -141,6 +158,7 @@ func (pL *publishListService) PublishList(context context.Context, request *DouY
 				VideoList: nil,
 			}, nil
 		}
+		isFavorite := model.IsFavorited(&model.Favorite{UserID: claims.ID, VideoID: video.Id}, db)
 		videoList = append(videoList, &Video{
 			Id: video.Id,
 			Author: &User{
@@ -160,7 +178,7 @@ func (pL *publishListService) PublishList(context context.Context, request *DouY
 			CoverUrl: video.CoverUrl,
 			FavoriteCount: video.FavoriteCount,
 			CommentCount: video.CommentCount,
-			IsFavorite: video.IsFavorite,
+			IsFavorite: isFavorite,
 			Title: video.Title,
 		})
 	}

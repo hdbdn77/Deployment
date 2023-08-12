@@ -1,0 +1,5 @@
+username: "root"
+password: "hdbdn"
+host:     "mysql"
+port:     3306
+dbname:   "simplifiedTikTok"

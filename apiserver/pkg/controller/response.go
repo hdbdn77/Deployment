@@ -84,3 +84,24 @@ type FeedResponse struct {
 	NextTime int64 `json:"next_time,omitempty"`
 	VideoList []Video `json:"video_list"`
 }
+
+// favorite
+type FavoriteActionResponse struct {
+	Response
+}
+
+type FavoriteListResponse struct {
+	Response
+	VideoList []Video `json:"video_list"`
+}
+
+// comment
+type CommentActionResponse struct {
+	Response
+	Comment Comment `json:"comment"`
+}
+
+type CommentListResponse struct {
+	Response
+	CommentList []Comment `json:"comment_list"`
+}

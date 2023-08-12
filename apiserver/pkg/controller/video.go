@@ -49,6 +49,7 @@ func Publish(c *gin.Context) {
 		fileName := strings.Replace(publishActionResponse.StatusMsg, "保存视频成功:", "", 1)
 		go c.SaveUploadedFile(publishRequest.Data, "static/" + fileName)
 	}
+	
 	c.JSON(http.StatusOK, Response{
 		StatusCode: publishActionResponse.StatusCode,
 		StatusMsg: publishActionResponse.StatusMsg,
@@ -111,7 +112,7 @@ func PublishList(c *gin.Context) {
 				WorkCount: video.Author.WorkCount,
 				FavoriteCount: video.Author.FavoriteCount,
 			},
-			PlayUrl: "http://121.41.85.100:30808/" + video.PlayUrl,
+			PlayUrl: "http://localhost:8080/" + video.PlayUrl,
 			CoverUrl: "http://5b0988e595225.cdn.sohucs.com/images/20180430/fcf555aed1804ad586b24b3aeda6c031.jpeg",
 			FavoriteCount: video.FavoriteCount,
 			CommentCount: video.CommentCount,
