@@ -7,7 +7,7 @@ import (
 
 	"github.com/micro/simplifiedTikTok/feedservice/pkg/model"
 	"github.com/micro/simplifiedTikTok/feedservice/pkg/utils"
-	"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
+	"github.com/micro/simplifiedTikTok/feedservice/pkg/dao"
 )
 
 var FeedService = &feedService{}

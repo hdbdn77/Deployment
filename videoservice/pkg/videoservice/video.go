@@ -9,7 +9,7 @@ import (
 
 	"github.com/micro/simplifiedTikTok/videoservice/pkg/model"
 	"github.com/micro/simplifiedTikTok/videoservice/pkg/utils"
-	"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
+	"github.com/micro/simplifiedTikTok/videoservice/pkg/dao"
 )
 
 var PublishActionService = &publishActionService{}

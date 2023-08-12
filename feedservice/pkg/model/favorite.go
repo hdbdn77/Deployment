@@ -4,7 +4,7 @@ import (
 	"errors"
 	_"fmt"
 
-	_"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
+	_"github.com/micro/simplifiedTikTok/feedservice/pkg/dao"
 	"gorm.io/gorm"
 )
 

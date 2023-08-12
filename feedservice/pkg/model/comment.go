@@ -5,7 +5,7 @@ import (
 	_"fmt"
 	"time"
 
-	_"github.com/micro/simplifiedTikTok/commentservice/pkg/dao"
+	_"github.com/micro/simplifiedTikTok/feedservice/pkg/dao"
 	"gorm.io/gorm"
 )
 

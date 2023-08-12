@@ -6,7 +6,7 @@ import (
 
 	"github.com/micro/simplifiedTikTok/userservice/pkg/model"
 	"github.com/micro/simplifiedTikTok/userservice/pkg/utils"
-	"github.com/micro/simplifiedTikTok/favoriteservice/pkg/dao"
+	"github.com/micro/simplifiedTikTok/userservice/pkg/dao"
 )
 
 var RegisterService = &registerService{}
