@@ -43,4 +43,4 @@ spec:
   ports:
     - port: 8080
       name: rpc-comment
-      protocol: GRPC 
+      protocol: TCP 

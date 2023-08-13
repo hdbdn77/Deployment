@@ -42,4 +42,4 @@ spec:
   ports:
     - port: 8080
       name: rpc-video
-      protocol: GRPC 
+      protocol: TCP 
