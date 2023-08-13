@@ -10,7 +10,7 @@ spec:
       number: 8080
       name: rpc-favorite
       protocol: GRPC
-    host:
+    hosts:
     - favorite
 
 ---
@@ -19,7 +19,7 @@ kind: VirtualService
 metadata:
   name: favorite
 spec:
-  host:
+  hosts:
   - favorite
   gateways:
   - douyin-favorite

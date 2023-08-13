@@ -10,7 +10,7 @@ spec:
       number: 8080
       name: rpc-user
       protocol: GRPC
-    host:
+    hosts:
     - user
 
 ---
@@ -19,7 +19,7 @@ kind: VirtualService
 metadata:
   name: user
 spec:
-  host:
+  hosts:
   - user
   gateways:
   - douyin-user

@@ -10,7 +10,7 @@ spec:
       number: 8080
       name: rpc-video
       protocol: GRPC
-    host:
+    hosts:
     - video
 
 ---
@@ -19,7 +19,7 @@ kind: VirtualService
 metadata:
   name: video
 spec:
-  host:
+  hosts:
   - video
   gateways:
   - douyin-video

@@ -10,7 +10,7 @@ spec:
       number: 8080
       name: rpc-feed
       protocol: GRPC
-    host:
+    hosts:
     - feed
 
 ---
@@ -19,7 +19,7 @@ kind: VirtualService
 metadata:
   name: feed
 spec:
-  host:
+  hosts:
   - feed
   gateways:
   - douyin-feed

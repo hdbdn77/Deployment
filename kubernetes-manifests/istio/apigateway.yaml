@@ -10,7 +10,7 @@ spec:
       number: 8080
       name: http
       protocol: HTTP
-    host:
+    hosts:
     - apigateway
 
 ---
@@ -19,7 +19,7 @@ kind: VirtualService
 metadata:
   name: apigateway
 spec:
-  host:
+  hosts:
   - apigateway
   gateways:
   - douyin-apigateway

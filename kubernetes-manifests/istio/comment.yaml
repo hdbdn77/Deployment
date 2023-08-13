@@ -10,7 +10,7 @@ spec:
       number: 8080
       name: rpc-comment
       protocol: GRPC
-    host:
+    hosts:
     - comment
 
 ---
@@ -19,7 +19,7 @@ kind: VirtualService
 metadata:
   name: comment
 spec:
-  host:
+  hosts:
   - comment
   gateways:
   - douyin-comment
