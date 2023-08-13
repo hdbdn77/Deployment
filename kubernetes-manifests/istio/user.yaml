@@ -9,7 +9,7 @@ spec:
   - port:
       number: 8080
       name: rpc-user
-      protocol: GRPC
+      protocol: TCP
     hosts:
     - "user.douyin.svc.cluster.local"
 
@@ -23,7 +23,7 @@ spec:
   - "user.douyin.svc.cluster.local"
   gateways:
   - douyin-user
-  grpc:
+  tcp:
   - match:
     - port: rpc-user
     - destination:

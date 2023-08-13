@@ -9,7 +9,7 @@ spec:
   - port:
       number: 8080
       name: rpc-favorite
-      protocol: GRPC
+      protocol: TCP
     hosts:
     - "favorite.douyin.svc.cluster.local"
 
@@ -23,7 +23,7 @@ spec:
   - "favorite.douyin.svc.cluster.local"
   gateways:
   - douyin-favorite
-  grpc:
+  tcp:
   - match:
     - port: rpc-favorite
     - destination:

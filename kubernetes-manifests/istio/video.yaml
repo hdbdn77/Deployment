@@ -9,7 +9,7 @@ spec:
   - port:
       number: 8080
       name: rpc-video
-      protocol: GRPC
+      protocol: TCP
     hosts:
     - "video.douyin.svc.cluster.local"
 
@@ -23,7 +23,7 @@ spec:
   - "video.douyin.svc.cluster.local"
   gateways:
   - douyin-video
-  grpc:
+  tcp:
   - match:
     - port: rpc-video
     - destination:

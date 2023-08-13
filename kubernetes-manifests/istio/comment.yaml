@@ -9,7 +9,7 @@ spec:
   - port:
       number: 8080
       name: rpc-comment
-      protocol: GRPC
+      protocol: TCP
     hosts:
     - "comment.douyin.svc.cluster.local"
 
@@ -23,7 +23,7 @@ spec:
   - "comment.douyin.svc.cluster.local"
   gateways:
   - douyin-comment
-  grpc:
+  tcp:
   - match:
     - port: rpc-comment
     - destination:
