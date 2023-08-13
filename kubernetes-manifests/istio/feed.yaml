@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: douyin-feed
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: rpc-feed
+      protocol: GRPC
+    host:
+    - feed
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: feed
+spec:
+  host:
+  - feed
+  gateways:
+  - douyin-feed
+  grpc:
+  - match:
+    - port: rpc-feed
+    - destination:
+        host: feed
+        port:
+          number: 8080

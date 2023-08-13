@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: douyin-video
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: rpc-video
+      protocol: GRPC
+    host:
+    - video
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: video
+spec:
+  host:
+  - video
+  gateways:
+  - douyin-video
+  grpc:
+  - match:
+    - port: rpc-video
+    - destination:
+        host: video
+        port:
+          number: 8080

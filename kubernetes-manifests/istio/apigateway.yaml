@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: douyin-apigateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: http
+      protocol: HTTP
+    host:
+    - apigateway
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: apigateway
+spec:
+  host:
+  - apigateway
+  gateways:
+  - douyin-apigateway
+  http:
+  - match:
+    - uri:
+        prefix: /douyin
+    - uri:
+        prefix: /static
+    route:
+    - destination:
+        host: apigateway
+        port:
+          number: 8080

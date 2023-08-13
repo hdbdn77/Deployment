@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: feed-v1
+  namespace: douyin
+  labels:
+    type: douyin
+    app: feed
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feed
+  template:
+    metadata:
+      labels:
+        type: douyin
+        app: feed
+        version: v1
+    spec:
+      nodeSelector:
+        disktype: douyin
+      containers:
+      - name: feed
+        image: registry.cn-hangzhou.aliyuncs.com/douyin_micro_demo/feed:v1
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service  
+metadata:
+  name: feed
+  namespace: douyin
+  labels:
+    type: douyin
+    app: feed
+spec:
+  type: ClusterIP
+  selector:
+    app: feed
+  ports:
+    - port: 8080
+      name: rpc-feed
+      protocol: GRPC 

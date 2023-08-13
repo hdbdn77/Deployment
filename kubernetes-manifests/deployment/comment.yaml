@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: comment-v1
+  namespace: douyin
+  labels:
+    type: douyin
+    app: comment
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: comment
+  template:
+    metadata:
+      labels:
+        type: douyin
+        app: comment
+        version: v1
+    spec:
+      nodeSelector:
+        disktype: douyin
+      containers:
+      - name: comment
+        image: registry.cn-hangzhou.aliyuncs.com/douyin_micro_demo/comment:v1
+        ports:
+        - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service  
+metadata:
+  name: comment
+  namespace: douyin
+  labels:
+    type: douyin
+    app: comment
+spec:
+  type: ClusterIP
+  selector:
+    app: comment
+  ports:
+    - port: 8080
+      name: rpc-comment
+      protocol: GRPC 

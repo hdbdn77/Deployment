@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: douyin-user
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: rpc-user
+      protocol: GRPC
+    host:
+    - user
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: user
+spec:
+  host:
+  - user
+  gateways:
+  - douyin-user
+  grpc:
+  - match:
+    - port: rpc-user
+    - destination:
+        host: user
+        port:
+          number: 8080

@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: douyin-favorite
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: rpc-favorite
+      protocol: GRPC
+    host:
+    - favorite
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: favorite
+spec:
+  host:
+  - favorite
+  gateways:
+  - douyin-favorite
+  grpc:
+  - match:
+    - port: rpc-favorite
+    - destination:
+        host: favorite
+        port:
+          number: 8080

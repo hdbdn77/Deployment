@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: video-v1
+  namespace: douyin
+  labels:
+    type: douyin
+    app: video
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: video
+  template:
+    metadata:
+      labels:
+        type: douyin
+        app: video
+        version: v1
+    spec:
+      nodeSelector:
+        disktype: douyin
+      containers:
+      - name: video
+        image: registry.cn-hangzhou.aliyuncs.com/douyin_micro_demo/video:v1
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service  
+metadata:
+  name: video
+  namespace: douyin
+  labels:
+    type: douyin
+    app: video
+spec:
+  type: ClusterIP
+  selector:
+    app: video
+  ports:
+    - port: 8080
+      name: rpc-video
+      protocol: GRPC 
