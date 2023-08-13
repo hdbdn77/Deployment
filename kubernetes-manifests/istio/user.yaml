@@ -1,4 +1,4 @@
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1beta3
 kind: Gateway
 metadata:
   name: douyin-user
@@ -11,16 +11,16 @@ spec:
       name: rpc-user
       protocol: GRPC
     hosts:
-    - user
+    - "user.douyin.svc.cluster.local"
 
 ---
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1beta3
 kind: VirtualService
 metadata:
   name: user
 spec:
   hosts:
-  - user
+  - "user.douyin.svc.cluster.local"
   gateways:
   - douyin-user
   grpc:

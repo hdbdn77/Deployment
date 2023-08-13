@@ -1,4 +1,4 @@
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1beta3
 kind: Gateway
 metadata:
   name: douyin-favorite
@@ -11,16 +11,16 @@ spec:
       name: rpc-favorite
       protocol: GRPC
     hosts:
-    - favorite
+    - "favorite.douyin.svc.cluster.local"
 
 ---
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1beta3
 kind: VirtualService
 metadata:
   name: favorite
 spec:
   hosts:
-  - favorite
+  - "favorite.douyin.svc.cluster.local"
   gateways:
   - douyin-favorite
   grpc:
