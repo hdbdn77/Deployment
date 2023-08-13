@@ -25,7 +25,8 @@ spec:
   - douyin-favorite
   tcp:
   - match:
-    - port: rpc-favorite
+    - port: 8080
+    route:
     - destination:
         host: favorite
         port:

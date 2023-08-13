@@ -25,7 +25,8 @@ spec:
   - douyin-user
   tcp:
   - match:
-    - port: rpc-user
+    - port: 8080
+    route:
     - destination:
         host: user
         port:

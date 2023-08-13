@@ -25,7 +25,8 @@ spec:
   - douyin-video
   tcp:
   - match:
-    - port: rpc-video
+    - port: 8080
+    route:
     - destination:
         host: video
         port:

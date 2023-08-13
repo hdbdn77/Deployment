@@ -25,7 +25,8 @@ spec:
   - douyin-comment
   tcp:
   - match:
-    - port: rpc-comment
+    - port: 8080
+    route:
     - destination:
         host: comment
         port:

@@ -25,7 +25,8 @@ spec:
   - douyin-feed
   tcp:
   - match:
-    - port: rpc-feed
+    - port: 8080
+    route:
     - destination:
         host: feed
         port:
