@@ -2,6 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: douyin-video
+  namespace: douyin
 spec:
   selector:
     istio: ingressgateway
@@ -18,6 +19,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: video
+  namespace: douyin
 spec:
   hosts:
   - "video.douyin.svc.cluster.local"

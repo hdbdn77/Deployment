@@ -2,6 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: douyin-favorite
+  namespace: douyin
 spec:
   selector:
     istio: ingressgateway
@@ -18,6 +19,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: favorite
+  namespace: douyin
 spec:
   hosts:
   - "favorite.douyin.svc.cluster.local"

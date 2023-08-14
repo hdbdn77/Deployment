@@ -2,6 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: douyin-comment
+  namespace: douyin
 spec:
   selector:
     istio: ingressgateway
@@ -18,6 +19,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: comment
+  namespace: douyin
 spec:
   hosts:
   - "comment.douyin.svc.cluster.local"
