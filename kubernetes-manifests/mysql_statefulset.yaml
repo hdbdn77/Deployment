@@ -7,6 +7,8 @@ metadata:
     type: douyin
     app: mysql
     version: v1
+  annotations:
+    sidecar.istio.io/inject: "false"
 spec:
   serviceName: "mysql"
   replicas: 1
