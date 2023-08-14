@@ -9,10 +9,10 @@ spec:
   servers:
   - port:
       number: 3306
-      name: tcp
-      protocol: TCP
+      name: mysql
+      protocol: HTTP
     hosts:
-    - "*"
+    - "mysql.douyin.svc.cluster.local"
 
 ---
 apiVersion: networking.istio.io/v1alpha3
