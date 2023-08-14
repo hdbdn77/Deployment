@@ -11,7 +11,7 @@ spec:
       name: tcp
       protocol: TCP
     hosts:
-    - "mysql.douyin.svc.cluster.local"
+    - "*"
 
 ---
 apiVersion: networking.istio.io/v1alpha3
@@ -20,7 +20,7 @@ metadata:
   name: mysql
 spec:
   hosts:
-  - "mysql.douyin.svc.cluster.local"
+  - "*"
   gateways:
   - douyin-mysql
   http:
