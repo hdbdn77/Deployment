@@ -9,7 +9,7 @@ spec:
   - port:
       number: 3306
       name: tcp
-      protocol: TCP
+      protocol: HTTP
     hosts:
     - "mysql.douyin.svc.cluster.local"
 
