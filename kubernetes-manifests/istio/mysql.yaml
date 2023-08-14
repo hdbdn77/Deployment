@@ -28,6 +28,6 @@ spec:
     - port: 3306
     route:
     - destination:
-        host: mysql
+        host: "mysql.douyin.svc.cluster.local"
         port:
           number: 3306
