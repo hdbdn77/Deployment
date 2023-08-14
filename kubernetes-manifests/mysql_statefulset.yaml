@@ -3,6 +3,10 @@ kind: StatefulSet
 metadata:
   name: mysql
   namespace: douyin
+  labels:
+    type: douyin
+    app: mysql
+    version: v1
 spec:
   serviceName: "mysql"
   replicas: 1
@@ -12,7 +16,9 @@ spec:
   template:
     metadata:
       labels:
+        type: douyin
         app: mysql
+        version: v1
     spec:
       nodeSelector:
         disktype: douyin
@@ -62,10 +68,15 @@ kind: Service
 metadata: 
   name: mysql
   namespace: douyin 
+  labels:
+    type: douyin
+    app: mysql
 spec:
   type: NodePort  
   ports:
   - port: 3306
+    name: tcp
+    protocol: TCP
     nodePort: 30306
   selector:
     app: mysql

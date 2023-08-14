@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: douyin-mysql
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 3306
+      name: tcp
+      protocol: TCP
+    hosts:
+    - "mysql.douyin.svc.cluster.local"
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mysql
+spec:
+  hosts:
+  - "mysql.douyin.svc.cluster.local"
+  gateways:
+  - douyin-mysql
+  http:
+  - match:
+    - port: 3306
+    route:
+    - destination:
+        host: mysql
+        port:
+          number: 3306
