@@ -32,7 +32,7 @@ spec:
         prefix: /static
     route:
     - destination:
-        host: apigateway
+        host: apigateway.douyin.svc.cluster.local
         subset: v1
         port:
           number: 8080
