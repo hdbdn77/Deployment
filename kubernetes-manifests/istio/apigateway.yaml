@@ -10,7 +10,7 @@ spec:
   - port:
       number: 80
       name: http2
-      protocol: TCP
+      protocol: HTTP
     hosts:
     - "*.apigateway.douyin.svc.cluster.local"
 ---
