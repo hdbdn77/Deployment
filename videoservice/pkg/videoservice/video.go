@@ -59,9 +59,9 @@ func (pA *publishActionService) PublishAction(context context.Context, request *
 	// 保存数据至mysql
 		
 	// v1版本
-	coverUrl := "https://cdn.pixabay.com/photo/2023/08/07/21/37/marshlands-8176000_1280.png"
+	// coverUrl := "https://cdn.pixabay.com/photo/2023/08/07/21/37/marshlands-8176000_1280.png"
 	// v2版本
-	// coverUrl := "https://cdn.pixabay.com/photo/2023/03/06/14/27/man-7833617_1280.jpg"
+	coverUrl := "https://cdn.pixabay.com/photo/2023/03/06/14/27/man-7833617_1280.jpg"
 	video := model.Video{AuthorId: claims.ID, PlayUrl: filePath, Title: request.Title, CoverUrl: coverUrl}
 	newVideo, err := model.CreateVideo(&video, tx)
 	if err != nil {
