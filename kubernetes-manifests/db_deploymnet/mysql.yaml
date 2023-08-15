@@ -8,7 +8,6 @@ metadata:
     app: mysql
     version: v1
 spec:
-  serviceName: "mysql"
   replicas: 1
   selector:
     matchLabels:
