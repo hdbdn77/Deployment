@@ -1,20 +1,4 @@
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: douyin-comment
-  namespace: douyin
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-  - port:
-      number: 8080
-      name: rpc-comment
-      protocol: TCP
-    hosts:
-    - "comment.douyin.svc.cluster.local"
 
----
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:

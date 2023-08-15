@@ -36,11 +36,10 @@ metadata:
     type: douyin
     app: apigateway
 spec:
-  type: NodePort  
+  type: ClusterIP  
   selector:
     app: apigateway
   ports:
   - port: 8080
-    name: http
-    protocol: TCP
-    nodePort: 30808
+    name: apigateway
+    protocol: HTTP

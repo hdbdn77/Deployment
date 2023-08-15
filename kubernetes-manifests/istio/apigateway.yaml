@@ -8,9 +8,9 @@ spec:
     istio: ingressgateway
   servers:
   - port:
-      number: 8080
-      name: http
-      protocol: HTTP
+      number: 80
+      name: http2
+      protocol: TCP
     hosts:
     - "apigateway.douyin.svc.cluster.local"
 
