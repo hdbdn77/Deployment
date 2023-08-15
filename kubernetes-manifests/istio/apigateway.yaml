@@ -12,8 +12,7 @@ spec:
       name: http2
       protocol: TCP
     hosts:
-    - "apigateway.douyin.svc.cluster.local"
-
+    - "*.apigateway.douyin.svc.cluster.local"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -22,7 +21,7 @@ metadata:
   namespace: douyin
 spec:
   hosts:
-  - "apigateway.douyin.svc.cluster.local"
+  - "*.apigateway.douyin.svc.cluster.local"
   gateways:
   - douyin-apigateway
   http:
@@ -34,5 +33,20 @@ spec:
     route:
     - destination:
         host: apigateway
+        subset:
+          - name: v1
+            weight: 100
         port:
           number: 8080
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: apigateway
+  namespace: douyin
+spec:
+  host: apigateway
+  subsets:
+  - name: v1
+    labels:
+      version: v1 
