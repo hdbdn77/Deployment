@@ -21,7 +21,7 @@ metadata:
   namespace: douyin
 spec:
   hosts:
-  - "*"
+  - "*.apigateway.douyin.svc.cluster.local"
   gateways:
   - douyin-apigateway
   http:
