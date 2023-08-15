@@ -12,13 +12,16 @@ spec:
     route:
     - destination:
         host: user
-        subset:
-          - name: v1
-            weight: 50
-          - name: v2
-            weight: 50
+        subset: v1
         port:
           number: 8080
+      weight: 50
+    - destination:
+        host: user
+        subset: v2    
+        port:
+          number: 8080
+      weight: 50
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
