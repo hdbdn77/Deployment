@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"os"
+	_ "os"
 	"encoding/json"
 
 	"github.com/micro/simplifiedTikTok/videoservice/pkg/model"
@@ -30,33 +30,39 @@ func (pA *publishActionService) PublishAction(context context.Context, request *
 
 	fileName := claims.Username + request.Title + fmt.Sprint(time.Now().Unix()) +".mp4"
 	filePath := "static/" + fileName
-	f, err := os.Create(filePath) 
-	if err != nil {
-		return &DouYinPublishActionResponse{
-			StatusCode: -2,
-			StatusMsg: "创建视频文件出错",
-		}, err
-	}
-	defer f.Close()
-	// 将视频字节数组写入文件
-	if _, err := f.Write(request.Data); err != nil {
-		return &DouYinPublishActionResponse{
-			StatusCode: -2,
-			StatusMsg: "视频字节数组写入文件出错",
-		}, nil
-	}
-	// 将缓冲区的数据写入磁盘
-	if err := f.Sync(); err != nil {
-		return &DouYinPublishActionResponse{
-			StatusCode: -2,
-			StatusMsg: "缓冲区的数据写入磁盘出错",
-		}, nil
-	}
+	// 保存视频，可替换为oss存储
+	// f, err := os.Create(filePath) 
+	// if err != nil {
+	// 	return &DouYinPublishActionResponse{
+	// 		StatusCode: -2,
+	// 		StatusMsg: "创建视频文件出错",
+	// 	}, err
+	// }
+	// defer f.Close()
+	// // 将视频字节数组写入文件
+	// if _, err := f.Write(request.Data); err != nil {
+	// 	return &DouYinPublishActionResponse{
+	// 		StatusCode: -2,
+	// 		StatusMsg: "视频字节数组写入文件出错",
+	// 	}, nil
+	// }
+	// // 将缓冲区的数据写入磁盘
+	// if err := f.Sync(); err != nil {
+	// 	return &DouYinPublishActionResponse{
+	// 		StatusCode: -2,
+	// 		StatusMsg: "缓冲区的数据写入磁盘出错",
+	// 	}, nil
+	// }
 
 	db := dao.GetDB()
 	tx := db.Begin()
 	// 保存数据至mysql
-	video := model.Video{AuthorId: claims.ID, PlayUrl: filePath, Title: request.Title}
+		
+	// v1版本
+	coverUrl := "https://cdn.pixabay.com/photo/2023/08/07/21/37/marshlands-8176000_1280.png"
+	// v2版本
+	// coverUrl := "https://cdn.pixabay.com/photo/2023/03/06/14/27/man-7833617_1280.jpg"
+	video := model.Video{AuthorId: claims.ID, PlayUrl: filePath, Title: request.Title, CoverUrl: coverUrl}
 	newVideo, err := model.CreateVideo(&video, tx)
 	if err != nil {
 		tx.Rollback()

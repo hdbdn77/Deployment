@@ -20,7 +20,15 @@ type userService struct {}
 func (r *registerService) Register(context context.Context, request *DouYinUserRegisterRequest) (*DouYinUserRegisterResponse, error){
 	//实现具体的业务逻辑
 	db := dao.GetDB()
-	user , err := model.Register(&model.User{Username: request.Username, Password: request.Password}, db)
+	// v1版本
+	avater := "https://cdn.pixabay.com/photo/2014/03/25/15/23/man-296678_1280.png"
+	backgroundImage := "https://cdn.pixabay.com/photo/2020/09/21/11/04/boat-5589754_1280.jpg"
+	signature := "一万年太久，只争朝夕。做大事，不是大成就是大败，永远没有中间路线。"
+	// v2版本
+	// avater := "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_1280.png"
+	// backgroundImage := "https://cdn.pixabay.com/photo/2019/05/29/16/16/flower-4237916_1280.jpg"
+	// signature := "出身寒微，不是耻辱，能屈能伸，方为丈夫。"
+	user , err := model.Register(&model.User{Username: request.Username, Password: request.Password, Avatar: avater, BackgroundImage: backgroundImage, Signature: signature}, db)
 	token, _ := utils.GenToken(user.Id, user.Username)
 	if err != nil {
 		fmt.Println(err)

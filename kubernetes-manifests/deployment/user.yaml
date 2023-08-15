@@ -27,6 +27,35 @@ spec:
         ports:
         - containerPort: 8080
 ---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: user-v2
+  namespace: douyin
+  labels:
+    type: douyin
+    app: user
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        type: douyin
+        app: user
+        version: v2
+    spec:
+      nodeSelector:
+        disktype: douyin
+      containers:
+      - name: user
+        image: registry.cn-hangzhou.aliyuncs.com/douyin_micro_demo/user:v2
+        ports:
+        - containerPort: 8080
+---
 apiVersion: v1
 kind: Service  
 metadata:

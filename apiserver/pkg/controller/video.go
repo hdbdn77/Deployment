@@ -97,6 +97,9 @@ func PublishList(c *gin.Context) {
 
 	var publishList []Video
 	for _, video := range publishListResponse.VideoList {
+		if strings.HasPrefix(video.PlayUrl, "static/") {
+			video.PlayUrl = "http://121.41.85.100:30808/" + video.PlayUrl
+		}
 		publishList = append(publishList, Video{
 			Id: video.Id,
 			Author: User{
@@ -112,8 +115,8 @@ func PublishList(c *gin.Context) {
 				WorkCount: video.Author.WorkCount,
 				FavoriteCount: video.Author.FavoriteCount,
 			},
-			PlayUrl: "http://121.41.85.100:30808/" + video.PlayUrl,
-			CoverUrl: "http://5b0988e595225.cdn.sohucs.com/images/20180430/fcf555aed1804ad586b24b3aeda6c031.jpeg",
+			PlayUrl: video.PlayUrl,
+			CoverUrl: video.CoverUrl,
 			FavoriteCount: video.FavoriteCount,
 			CommentCount: video.CommentCount,
 			IsFavorite: video.IsFavorite,

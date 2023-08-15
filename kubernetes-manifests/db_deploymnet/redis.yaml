@@ -1,46 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: comment-v1
+  name: redis
   namespace: douyin
   labels:
     type: douyin
-    app: comment
+    app: redis
     version: v1
 spec:
-  replicas: 2
+  serviceName: "redis"
+  replicas: 1
   selector:
     matchLabels:
-      app: comment
+      app: redis
   template:
     metadata:
       labels:
         type: douyin
-        app: comment
+        app: redis
         version: v1
     spec:
       nodeSelector:
         disktype: douyin
       containers:
-      - name: comment
-        image: registry.cn-hangzhou.aliyuncs.com/douyin_micro_demo/comment:v1
+      - name: redis
+        image: redis:5.0
         ports:
-        - containerPort: 8080
+        - containerPort: 6379
 
 ---
 apiVersion: v1
 kind: Service  
 metadata:
-  name: comment
+  name: redis
   namespace: douyin
   labels:
     type: douyin
-    app: comment
+    app: redis
 spec:
   type: ClusterIP
-  selector:
-    app: comment
   ports:
-    - port: 8080
-      name: rpc-comment
-      protocol: TCP 
+    - port: 6379
+      name: redis
+      protocol: TCP
+  selector:
+    app: redis
