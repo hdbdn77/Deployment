@@ -1,51 +1,47 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: douyin-apigateway
+  name: douyin-mysql
   namespace: douyin
 spec:
   selector:
     istio: ingressgateway
   servers:
   - port:
-      number: 80
-      name: http2
-      protocol: HTTP
+      number: 3306
+      name: mysql
+      protocol: TCP
     hosts:
     - "istio-ingressgateway.istio-system.svc.cluster.local"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: apigateway
+  name: mysql
   namespace: douyin
 spec:
   hosts:
   - "istio-ingressgateway.istio-system.svc.cluster.local"
   gateways:
-  - douyin-apigateway
-  http:
+  - douyin-mysql
+  tcp:
   - match:
-    - uri:
-        prefix: /douyin
-    - uri:
-        prefix: /static
+    - port: 3306
     route:
     - destination:
-        host: apigateway
+        host: mysql
         subset: v1
-        port:
-          number: 8080
+        port: 
+          number: 3306
       weight: 100
-        
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: apigateway
+  name: mysql
   namespace: douyin
 spec:
-  host: apigateway
+  host: mysql
   subsets:
   - name: v1
     labels:
