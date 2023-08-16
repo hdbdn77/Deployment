@@ -12,7 +12,7 @@ spec:
       name: mysql
       protocol: TCP
     hosts:
-    - "istio-ingressgateway.istio-system.svc.cluster.local"
+    - "*"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -21,7 +21,7 @@ metadata:
   namespace: douyin
 spec:
   hosts:
-  - "istio-ingressgateway.istio-system.svc.cluster.local"
+  - "*"
   gateways:
   - douyin-mysql
   tcp:
