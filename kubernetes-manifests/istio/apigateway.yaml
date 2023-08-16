@@ -12,7 +12,7 @@ spec:
       name: http2
       protocol: HTTP
     hosts:
-    - "istio-ingressgateway.istio-system.svc.cluster.local"
+    - "*.istio-ingressgateway.istio-system.svc.cluster.local"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -21,7 +21,7 @@ metadata:
   namespace: douyin
 spec:
   hosts:
-  - "istio-ingressgateway.istio-system.svc.cluster.local"
+  - "*.istio-ingressgateway.istio-system.svc.cluster.local"
   gateways:
   - douyin-apigateway
   http:
