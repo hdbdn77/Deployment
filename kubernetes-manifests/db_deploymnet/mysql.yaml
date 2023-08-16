@@ -39,11 +39,10 @@ metadata:
     type: douyin
     app: mysql
 spec:
-  type: NodePort  
+  type: ClusterIP  
   ports:
   - port: 3306
     name: tcp
     protocol: TCP
-    nodePort: 30306
   selector:
     app: mysql
