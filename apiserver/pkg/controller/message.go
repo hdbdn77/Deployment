@@ -5,7 +5,7 @@ import (
 	_ "fmt"
 	"net/http"
 	"strconv"
-	"time"
+	_ "time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -53,13 +53,13 @@ func MessageChat(c *gin.Context){
 
 	var messageList []Message
 	for _, message := range messageChatResponse.MessageList {
-		createTime := time.Unix(message.CreateTime, 0).Format("2006-01-02 15:04:05")
+		// createTime := time.Unix(message.CreateTime, 0).Format("2006-01-02 15:04:05")
 		messageList = append(messageList, Message{
 			Id: message.Id,
 			ToUserId: message.ToUserId,
 			FromUserId: message.FromUserId,
 			Content: message.Content,
-			CreateTime: createTime,
+			CreateTime: message.CreateTime,
 		})
 	}
 	c.JSON(http.StatusOK, MessageChatResponse{

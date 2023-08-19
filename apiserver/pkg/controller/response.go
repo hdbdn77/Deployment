@@ -59,7 +59,8 @@ type Message struct {
 	ToUserId   int64  `json:"to_user_id,omitempty"`
 	FromUserId int64  `json:"from_user_id,omitempty"`
 	Content    string `json:"content,omitempty"`
-	CreateTime string `json:"create_time,omitempty"`
+	// CreateTime string `json:"create_time,omitempty"`
+	CreateTime int64 `json:"create_time,omitempty"`
 }
 
 // type MessageSendEvent struct {
