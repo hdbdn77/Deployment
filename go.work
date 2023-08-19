@@ -5,6 +5,8 @@ use (
 	./commentservice
 	./favoriteservice
 	./feedservice
+	./messageservice
+	./relationservice
 	./userservice
 	./videoservice
 )

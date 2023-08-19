@@ -3,6 +3,7 @@ package feedservice
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/micro/simplifiedTikTok/feedservice/pkg/model"
@@ -33,61 +34,70 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 
 	db := dao.GetDB()
 
+	var redisMiss bool
 	//从redis中获取video缓存列表
 	if request.LatestTime == 0 {
 		len, err := model.GetVideoListSize("video")
 		if len == 0 || err != nil {
-			return &DouYinFeedResponse{
-				StatusCode: -2,
-				StatusMsg: "获取redis缓存失败",
-				VideoList: nil,
-				NextTime: time.Now().Unix(),
-			}, nil
-		}
+			// return &DouYinFeedResponse{
+			// 	StatusCode: -2,
+			// 	StatusMsg: "获取redis缓存失败",
+			// 	VideoList: nil,
+			// 	NextTime: time.Now().Unix(),
+			// }, nil
+			redisMiss = true
+			fmt.Println("获取redis缓存失败: ", err)
+		}else {
+			videos, err := model.GetVideoList("video")
+			if len == 0 || err != nil {
+				// return &DouYinFeedResponse{
+				// 	StatusCode: -2,
+				// 	StatusMsg: "获取redis视频列表失败",
+				// 	VideoList: nil,
+				// 	NextTime: time.Now().Unix(),
+				// }, nil
+				redisMiss = true
+				fmt.Println("获取redis视频列表失败: ", err)
+			}else {
+				var nextTime int64
+				var videoList []*Video
+				for i := 0; i < int(len); i++ {
+					var video Video
+					json.Unmarshal([]byte(videos[i]), &video)
+					if userId != -1 {
+						isFavorite := model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
+						video.IsFavorite = isFavorite
+					}
+					videoList = append(videoList, &video)
 
-		videos, err := model.GetVideoList("video")
-		if len == 0 || err != nil {
-			return &DouYinFeedResponse{
-				StatusCode: -2,
-				StatusMsg: "获取redis视频列表失败",
-				VideoList: nil,
-				NextTime: time.Now().Unix(),
-			}, nil
-		}
-		var nextTime int64
-		var videoList []*Video
-		for i := 0; i < int(len); i++ {
-			var video Video
-			json.Unmarshal([]byte(videos[i]), &video)
-			if userId != -1 {
-				isFavorite := model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
-				video.IsFavorite = isFavorite
-			}
-			videoList = append(videoList, &video)
-
-			if i == 0 {
-				newVideo , err:= model.GetVideoById(video.Id, db)
-				if err != nil {
-					return &DouYinFeedResponse{
-						StatusCode: -2,
-						StatusMsg: "获取视频投稿时间失败",
-						VideoList: nil,
-						NextTime: time.Now().Unix(),
-					}, nil
+					if i == 0 {
+						newVideo , err:= model.GetVideoById(video.Id, db)
+						if err != nil {
+							return &DouYinFeedResponse{
+								StatusCode: -2,
+								StatusMsg: "获取视频投稿时间失败",
+								VideoList: nil,
+								NextTime: time.Now().Unix(),
+							}, nil
+						}
+						nextTime = newVideo.PublishTime
+					}
 				}
-				nextTime = newVideo.PublishTime
+
+				return &DouYinFeedResponse{
+					StatusCode: 0,
+					StatusMsg: "获取视频列表成功",
+					VideoList: videoList,
+					NextTime: nextTime,
+				}, nil
 			}
 		}
-
-		return &DouYinFeedResponse{
-			StatusCode: 0,
-			StatusMsg: "获取视频列表成功",
-			VideoList: videoList,
-			NextTime: nextTime,
-		}, nil
 	}
 
 	//查询mysql
+	if redisMiss {
+		request.LatestTime = time.Now().Unix()
+	}
 	videos, err := model.ListVideoByTime(request.LatestTime, db)
 	if err != nil {
 		return &DouYinFeedResponse{
@@ -140,6 +150,23 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 		nextTime = (*videos)[0].PublishTime
 	}
 	
+	if redisMiss {
+		go func() {
+			for i := len(videoList) - 1; i >= 0; i-- {
+				latestVideo := videoList[i]
+				latestVideo.IsFavorite = false
+				jsonStr, err := json.Marshal(latestVideo)
+				if err != nil {
+					fmt.Println("序列化video失败")
+				}
+
+				err = model.AddVideoToList("video",jsonStr)
+				if err != nil {
+					fmt.Println("添加最新视频失败")
+				}
+			}
+		}()
+	}
 
 	return &DouYinFeedResponse{
 		StatusCode: 0,

@@ -61,3 +61,36 @@ type CommentListRequest struct {
 	Token string `form:"token" binding:"required"`
 	VideoId string `form:"video_id" binding:"required"`
 }
+
+// relation request
+type RelationActionRequest struct {
+	Token string `form:"token" binding:"required"`
+	ToUserID string `form:"to_user_id" binding:"required"`
+	ActionType string `form:"action_type" binding:"required"`
+}
+
+type FollowListRequest struct {
+	Request
+}
+
+type FollowerListRequest struct {
+	Request
+}
+
+type FriendListRequest struct {
+	Request
+}
+
+// message request
+type MessageChatRequest struct {
+	Token string `form:"token" binding:"required"`
+	ToUserID string `form:"to_user_id" binding:"required"`
+	PreMsgTime string `form:"pre_msg_time" binding:"required"`
+}
+
+type MessageActionRequest struct {
+	Token string `form:"token" binding:"required"`
+	ToUserID string `form:"to_user_id" binding:"required"`
+	ActionType string `form:"action_type" binding:"required"`
+	Content string `form:"content" binding:"required"`
+}

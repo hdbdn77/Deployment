@@ -1,45 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: apigateway-v1
+  name: relation-v1
   namespace: douyin
   labels:
     type: douyin
-    app: apigateway
+    app: relation
     version: v1
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: apigateway
+      app: relation
   template:
     metadata:
       labels:
         type: douyin
-        app: apigateway
+        app: relation
         version: v1
     spec:
       nodeSelector:
         disktype: douyin
       containers:
-      - name: apigateway
-        image: registry.cn-hangzhou.aliyuncs.com/douyin_micro_demo/apigateway:v1
+      - name: relation
+        image: registry.cn-hangzhou.aliyuncs.com/douyin_micro_demo/relation:v1
         ports:
         - containerPort: 8080
+
 ---
 apiVersion: v1
-kind: Service
-metadata: 
-  name: apigateway
-  namespace: douyin 
+kind: Service  
+metadata:
+  name: relation
+  namespace: douyin
   labels:
     type: douyin
-    app: apigateway
+    app: relation
 spec:
-  type: ClusterIP  
+  type: ClusterIP
   selector:
-    app: apigateway
+    app: relation
   ports:
-  - port: 8080
-    name: apigateway
-    protocol: TCP
+    - port: 8080
+      name: rpc-relation
+      protocol: TCP 

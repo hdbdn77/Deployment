@@ -38,25 +38,44 @@ type User struct {
 	FavoriteCount   int64  `json:"favorite_count,omitempty"`
 }
 
+type FriendUser struct {
+	Id              int64  `json:"id,omitempty"`
+	Name            string `json:"name,omitempty"`
+	FollowCount     int64  `json:"follow_count,omitempty"`
+	FollowerCount   int64  `json:"follower_count,omitempty"`
+	IsFollow        bool   `json:"is_follow,omitempty"`
+	Avatar          string `json:"avatar,omitempty"`
+	BackgroundImage string `json:"background_image,omitempty"`
+	Signature       string `json:"signature,omitempty"`
+	TotalFavorited  int64  `json:"total_favorited,omitempty"`
+	WorkCount       int64  `json:"work_count,omitempty"`
+	FavoriteCount   int64  `json:"favorite_count,omitempty"`
+	Message         string `json:"message,omitempty"`
+	MsgType         int64  `json:"msgType,omitempty"`
+}
+
 type Message struct {
 	Id         int64  `json:"id,omitempty"`
+	UserId     int64  `json:"user_id,omitempty"`
+	ToUserId   int64  `json:"to_user_id,omitempty"`
+	FromUserId int64  `json:"from_user_id,omitempty"`
 	Content    string `json:"content,omitempty"`
 	CreateTime string `json:"create_time,omitempty"`
 }
 
-type MessageSendEvent struct {
-	UserId     int64  `json:"user_id,omitempty"`
-	ToUserId   int64  `json:"to_user_id,omitempty"`
-	MsgContent string `json:"msg_content,omitempty"`
-}
+// type MessageSendEvent struct {
+// 	UserId     int64  `json:"user_id,omitempty"`
+// 	ToUserId   int64  `json:"to_user_id,omitempty"`
+// 	MsgContent string `json:"msg_content,omitempty"`
+// }
 
-type MessagePushEvent struct {
-	FromUserId int64  `json:"user_id,omitempty"`
-	MsgContent string `json:"msg_content,omitempty"`
-}
+// type MessagePushEvent struct {
+// 	FromUserId int64  `json:"user_id,omitempty"`
+// 	MsgContent string `json:"msg_content,omitempty"`
+// }
 
 // 专属回复
-//user
+// user
 type UserLoginResponse struct {
 	Response
 	UserId int64  `json:"user_id,omitempty"`
@@ -104,4 +123,34 @@ type CommentActionResponse struct {
 type CommentListResponse struct {
 	Response
 	CommentList []Comment `json:"comment_list"`
+}
+
+// relation
+type RelationActionResponse struct {
+	Response
+}
+
+type FollowListResponse struct {
+	Response
+	UserList []User `json:"user_list"`
+}
+
+type FollowerListResponse struct {
+	Response
+	UserList []User `json:"user_list"`
+}
+
+type FriendListResponse struct {
+	Response
+	FriendUserList []FriendUser `json:"user_list"`
+}
+
+// message
+type MessageChatResponse struct {
+	Response
+	MessageList []Message `json:"message_list"`
+}
+
+type MessageActionResponse struct {
+	Response
 }
