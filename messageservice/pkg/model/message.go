@@ -36,6 +36,6 @@ func ListMessageByTime(message *Message, tx *gorm.DB) ([]*Message, error) {
 	tx.AutoMigrate(&Message{})
 
 	var messages []*Message
-	err := tx.Where("chat_id = ? AND create_time >= ?", message.ChatID, message.CreateTime).Find(&messages).Error
+	err := tx.Where("chat_id = ? AND create_time > ?", message.ChatID, message.CreateTime).Find(&messages).Error
 	return messages, err
 }
