@@ -66,7 +66,9 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 					json.Unmarshal([]byte(videos[i]), &video)
 					if userId != -1 {
 						isFavorite := model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
+						isFollow := model.IsFollowed(&model.Follow{FollowerUserID: userId, FollowedUserID: video.Author.Id}, db)
 						video.IsFavorite = isFavorite
+						video.Author.IsFollow = isFollow
 					}
 					videoList = append(videoList, &video)
 
@@ -119,8 +121,10 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 			}, nil
 		}
 		var isFavorite bool
+		var isFollow bool
 		if userId != -1 {
 			isFavorite = model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
+			isFollow = model.IsFollowed(&model.Follow{FollowerUserID: userId, FollowedUserID: user.Id}, db)
 		}
 		videoList = append(videoList, &Video{
 			Id: video.Id,
@@ -129,7 +133,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 				Name: user.Username,
 				FollowCount: user.FollowCount,
 				FollowerCount: user.FollowerCount,
-				IsFollow: user.IsFollow,
+				IsFollow: isFollow,
 				Avatar: user.Avatar,
 				BackgroundImage: user.BackgroundImage,
 				Signature: user.Signature,
@@ -155,6 +159,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 			for i := len(videoList) - 1; i >= 0; i-- {
 				latestVideo := videoList[i]
 				latestVideo.IsFavorite = false
+				latestVideo.Author.IsFollow = false
 				jsonStr, err := json.Marshal(latestVideo)
 				if err != nil {
 					fmt.Println("序列化video失败")

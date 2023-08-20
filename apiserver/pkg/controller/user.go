@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -34,7 +35,26 @@ func Register(c *gin.Context) {
 	}
 
 	registerServiceClient := <- clientconnect.UserRegisterChan
-	registerResponse, err := registerServiceClient.Register(context.Background(), &userservice.DouYinUserRegisterRequest{Username: userLoginRequest.Username, Password: userLoginRequest.Password})
+	// registerResponse, err := registerServiceClient.Register(context.Background(), &userservice.DouYinUserRegisterRequest{Username: userLoginRequest.Username, Password: userLoginRequest.Password})
+	// 超时重试
+	var registerResponse *userservice.DouYinUserRegisterResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		registerResponse, err = registerServiceClient.Register(ctx, &userservice.DouYinUserRegisterRequest{Username: userLoginRequest.Username, Password: userLoginRequest.Password})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.UserRegisterChan <- registerServiceClient
 	
 	if (registerResponse == nil) || (err != nil) {
@@ -81,7 +101,26 @@ func Login(c *gin.Context) {
 	}
 
 	loginServiceClient := <- clientconnect.UserLoginChan
-	loginResponse, err := loginServiceClient.Login(context.Background(), &userservice.DouYinUserLoginRequest{Username: userLoginRequest.Username, Password: userLoginRequest.Password})
+	// loginResponse, err := loginServiceClient.Login(context.Background(), &userservice.DouYinUserLoginRequest{Username: userLoginRequest.Username, Password: userLoginRequest.Password})
+	// 超时重试
+	var loginResponse *userservice.DouYinUserLoginResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		loginResponse, err = loginServiceClient.Login(ctx, &userservice.DouYinUserLoginRequest{Username: userLoginRequest.Username, Password: userLoginRequest.Password})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.UserLoginChan <- loginServiceClient
 	
 	if (loginResponse == nil) || (err != nil) {
@@ -128,7 +167,26 @@ func UserInfo(c *gin.Context) {
 
 	userId, _ := strconv.ParseInt(userInfoRequest.UserId, 10, 64)
 	userServiceClient := <- clientconnect.UserChan
-	userResponse, err := userServiceClient.Find(context.Background(), &userservice.DouYinUserRequest{UserId: userId, Token: userInfoRequest.Token})
+	// userResponse, err := userServiceClient.Find(context.Background(), &userservice.DouYinUserRequest{UserId: userId, Token: userInfoRequest.Token})
+	// 超时重试
+	var userResponse *userservice.DouYinUserResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		userResponse, err = userServiceClient.Find(ctx, &userservice.DouYinUserRequest{UserId: userId, Token: userInfoRequest.Token})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.UserChan <- userServiceClient
 	
 	if (userResponse == nil) || (err != nil) {

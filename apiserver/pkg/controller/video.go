@@ -8,6 +8,7 @@ import (
 	"io"
 	"bytes"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -32,7 +33,26 @@ func Publish(c *gin.Context) {
 	io.Copy(buf, dataBytes)
 	bytesData := buf.Bytes()
 	publishActionServiceClient := <- clientconnect.PublishActionChan
-	publishActionResponse, err := publishActionServiceClient.PublishAction(context.Background(), &videoservice.DouYinPublishActionRequest{Token: publishRequest.Token, Data: bytesData, Title: publishRequest.Title})
+	// publishActionResponse, err := publishActionServiceClient.PublishAction(context.Background(), &videoservice.DouYinPublishActionRequest{Token: publishRequest.Token, Data: bytesData, Title: publishRequest.Title})
+	// 超时重试
+	var publishActionResponse *videoservice.DouYinPublishActionResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		publishActionResponse, err = publishActionServiceClient.PublishAction(ctx, &videoservice.DouYinPublishActionRequest{Token: publishRequest.Token, Data: bytesData, Title: publishRequest.Title})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.PublishActionChan <- publishActionServiceClient
 
 	if (publishActionResponse == nil) || (err != nil) {
@@ -72,7 +92,26 @@ func PublishList(c *gin.Context) {
 
 	userId, _ := strconv.ParseInt(publishListRequest.UserId, 10, 64)
 	publishListServiceClient := <- clientconnect.PublishListChan
-	publishListResponse, err := publishListServiceClient.PublishList(context.Background(), &videoservice.DouYinPublishListRequest{Token: publishListRequest.Token, UserId: userId})
+	// publishListResponse, err := publishListServiceClient.PublishList(context.Background(), &videoservice.DouYinPublishListRequest{Token: publishListRequest.Token, UserId: userId})
+	// 超时重试
+	var publishListResponse *videoservice.DouYinPublishListResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		publishListResponse, err = publishListServiceClient.PublishList(ctx, &videoservice.DouYinPublishListRequest{Token: publishListRequest.Token, UserId: userId})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.PublishListChan <- publishListServiceClient
 
 	if (publishListResponse == nil) || (err != nil) {

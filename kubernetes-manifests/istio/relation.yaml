@@ -28,3 +28,15 @@ spec:
   - name: v1
     labels:
       version: v1 
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 40
+      http:
+        http1MaxPendingRequests: 40
+        maxRequestsPerConnection: 10
+    outlierDetection:
+      consecutiveErrors: 4
+      interval: 1s
+      baseEjectionTime: 5s
+      maxEjectionPercent: 100

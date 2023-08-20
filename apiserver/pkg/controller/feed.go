@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -26,7 +27,26 @@ func Feed(c *gin.Context) {
 
 	latestTime, _ := strconv.ParseInt(feedRequest.LatestTime, 10, 64)
 	feedServiceClient := <- clientconnect.FeedChan
-	feedResponse, err := feedServiceClient.Feed(context.Background(), &feedservice.DouYinFeedRequest{LatestTime: latestTime, Token: feedRequest.Token})
+	// feedResponse, err := feedServiceClient.Feed(context.Background(), &feedservice.DouYinFeedRequest{LatestTime: latestTime, Token: feedRequest.Token})
+	// 超时重试
+	var feedResponse *feedservice.DouYinFeedResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		feedResponse, err = feedServiceClient.Feed(ctx, &feedservice.DouYinFeedRequest{LatestTime: latestTime, Token: feedRequest.Token})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+
 	clientconnect.FeedChan <- feedServiceClient
 
 	if (feedResponse == nil) || (err != nil) {

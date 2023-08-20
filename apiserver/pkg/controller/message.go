@@ -5,7 +5,7 @@ import (
 	_ "fmt"
 	"net/http"
 	"strconv"
-	_ "time"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -28,7 +28,26 @@ func MessageChat(c *gin.Context){
 	toUserID, _ := strconv.ParseInt(messageChatRequest.ToUserID, 10, 64)
 	preMsgTime, _ := strconv.ParseInt(messageChatRequest.PreMsgTime, 10, 64)
 	messageChatClient := <- clientconnect.MessageChatChan
-	messageChatResponse, err := messageChatClient.MessageChat(context.Background(), &messageservice.DouYinMessageChatRequest{Token: messageChatRequest.Token, ToUserId: toUserID, PreMsgTime: preMsgTime})
+	// messageChatResponse, err := messageChatClient.MessageChat(context.Background(), &messageservice.DouYinMessageChatRequest{Token: messageChatRequest.Token, ToUserId: toUserID, PreMsgTime: preMsgTime})
+	// 超时重试
+	var messageChatResponse *messageservice.DouYinMessageChatResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		messageChatResponse, err = messageChatClient.MessageChat(ctx, &messageservice.DouYinMessageChatRequest{Token: messageChatRequest.Token, ToUserId: toUserID, PreMsgTime: preMsgTime})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+
 	clientconnect.MessageChatChan <- messageChatClient
 
 	if (messageChatResponse == nil) || (err != nil) {
@@ -87,7 +106,26 @@ func MessageAction(c *gin.Context){
 	toUserID, _ := strconv.ParseInt(messageActionRequest.ToUserID, 10, 64)
 	actionType, _ := strconv.ParseInt(messageActionRequest.ActionType, 10, 64)
 	messageActionClient := <- clientconnect.MessageActionChan
-	messageActionResponse, err := messageActionClient.MessageAction(context.Background(), &messageservice.DouYinMessageActionRequest{Token: messageActionRequest.Token, ToUserId: toUserID, ActionType: int32(actionType) , Content: messageActionRequest.Content})
+	// messageActionResponse, err := messageActionClient.MessageAction(context.Background(), &messageservice.DouYinMessageActionRequest{Token: messageActionRequest.Token, ToUserId: toUserID, ActionType: int32(actionType) , Content: messageActionRequest.Content})
+	// 超时重试
+	var messageActionResponse *messageservice.DouYinMessageActionResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		messageActionResponse, err = messageActionClient.MessageAction(ctx, &messageservice.DouYinMessageActionRequest{Token: messageActionRequest.Token, ToUserId: toUserID, ActionType: int32(actionType) , Content: messageActionRequest.Content})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.MessageActionChan <- messageActionClient
 
 	if (messageActionResponse == nil) || (err != nil) {

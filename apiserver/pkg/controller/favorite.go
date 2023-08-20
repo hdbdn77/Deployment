@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -28,7 +29,26 @@ func FavoriteAction(c *gin.Context) {
 	videoId, _ := strconv.ParseInt(favoriteActionRequest.VideoId, 10, 64)
 	actionType, _ := strconv.ParseInt(favoriteActionRequest.ActionType, 10, 64)
 	favoriteActionClient := <- clientconnect.FavoriteActionChan
-	favoriteActionResponse, err := favoriteActionClient.FavoriteAction(context.Background(), &favoriteservice.DouYinFavoriteActionRequest{Token: favoriteActionRequest.Token, VideoId: videoId, ActionType: int32(actionType)})
+	// favoriteActionResponse, err := favoriteActionClient.FavoriteAction(context.Background(), &favoriteservice.DouYinFavoriteActionRequest{Token: favoriteActionRequest.Token, VideoId: videoId, ActionType: int32(actionType)})
+	// 超时重试
+	var favoriteActionResponse *favoriteservice.DouYinFavoriteActionResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		favoriteActionResponse, err = favoriteActionClient.FavoriteAction(ctx, &favoriteservice.DouYinFavoriteActionRequest{Token: favoriteActionRequest.Token, VideoId: videoId, ActionType: int32(actionType)})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.FavoriteActionChan <- favoriteActionClient
 
 	if (favoriteActionResponse == nil) || (err != nil) {
@@ -64,7 +84,26 @@ func FavoriteList(c *gin.Context) {
 
 	userId, _ := strconv.ParseInt(favoriteListRequest.UserId, 10, 64)
 	favoriteListClient := <- clientconnect.FavoriteListChan
-	favoriteListResponse, err := favoriteListClient.FavoriteList(context.Background(), &favoriteservice.DouYinFavoriteListRequest{UserId: userId, Token: favoriteListRequest.Token})
+	// favoriteListResponse, err := favoriteListClient.FavoriteList(context.Background(), &favoriteservice.DouYinFavoriteListRequest{UserId: userId, Token: favoriteListRequest.Token})
+	// 超时重试
+	var favoriteListResponse *favoriteservice.DouYinFavoriteListResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		favoriteListResponse, err = favoriteListClient.FavoriteList(ctx, &favoriteservice.DouYinFavoriteListRequest{UserId: userId, Token: favoriteListRequest.Token})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.FavoriteListChan <- favoriteListClient
 
 	if (favoriteListResponse == nil) || (err != nil) {

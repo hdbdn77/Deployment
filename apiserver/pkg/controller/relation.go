@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/micro/simplifiedTikTok/apiserver/pkg/clientconnect"
@@ -27,7 +28,26 @@ func RelationAction(c *gin.Context){
 	toUserID, _ := strconv.ParseInt(relationActionRequest.ToUserID, 10, 64)
 	actionType, _ := strconv.ParseInt(relationActionRequest.ActionType, 10, 64)
 	relationActionClient := <- clientconnect.RelationActionChan
-	relationActionResponse, err := relationActionClient.RelationAction(context.Background(), &relationservice.DouYinRelationActionRequest{Token: relationActionRequest.Token, ToUserId: toUserID, ActionType: int32(actionType)})
+	// relationActionResponse, err := relationActionClient.RelationAction(context.Background(), &relationservice.DouYinRelationActionRequest{Token: relationActionRequest.Token, ToUserId: toUserID, ActionType: int32(actionType)})
+	// 超时重试
+	var relationActionResponse *relationservice.DouYinRelationActionResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		relationActionResponse, err = relationActionClient.RelationAction(ctx, &relationservice.DouYinRelationActionRequest{Token: relationActionRequest.Token, ToUserId: toUserID, ActionType: int32(actionType)})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.RelationActionChan <- relationActionClient
 
 	if (relationActionResponse == nil) || (err != nil) {
@@ -64,7 +84,26 @@ func FollowList(c *gin.Context){
 
 	UserID, _ := strconv.ParseInt(followListRequest.UserId, 10, 64)
 	followListClient := <- clientconnect.FollowListChan
-	followListResponse, err := followListClient.RelationFollowList(context.Background(), &relationservice.DouYinRelationFollowListRequest{UserId: UserID, Token: followListRequest.Token})
+	// followListResponse, err := followListClient.RelationFollowList(context.Background(), &relationservice.DouYinRelationFollowListRequest{UserId: UserID, Token: followListRequest.Token})
+	// 超时重试
+	var followListResponse *relationservice.DouYinRelationFollowListResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		followListResponse, err = followListClient.RelationFollowList(ctx, &relationservice.DouYinRelationFollowListRequest{UserId: UserID, Token: followListRequest.Token})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.FollowListChan <- followListClient
 
 	if (followListResponse == nil) || (err != nil) {
@@ -128,7 +167,26 @@ func FollowerList(c *gin.Context){
 
 	UserID, _ := strconv.ParseInt(followerListRequest.UserId, 10, 64)
 	followerListClient := <- clientconnect.FollowerListChan
-	followerListResponse, err := followerListClient.RelationFollowerList(context.Background(), &relationservice.DouYinRelationFollowerListRequest{UserId: UserID, Token: followerListRequest.Token})
+	// followerListResponse, err := followerListClient.RelationFollowerList(context.Background(), &relationservice.DouYinRelationFollowerListRequest{UserId: UserID, Token: followerListRequest.Token})
+	// 超时重试
+	var followerListResponse *relationservice.DouYinRelationFollowerListResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		followerListResponse, err = followerListClient.RelationFollowerList(ctx, &relationservice.DouYinRelationFollowerListRequest{UserId: UserID, Token: followerListRequest.Token})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.FollowerListChan <- followerListClient
 
 	if (followerListResponse == nil) || (err != nil) {
@@ -192,7 +250,26 @@ func FriendList(c *gin.Context){
 
 	UserID, _ := strconv.ParseInt(friendListRequest.UserId, 10, 64)
 	friendListClient := <- clientconnect.FriendListChan
-	friendListResponse, err := friendListClient.RelationFriendList(context.Background(), &relationservice.DouYinRelationFriendListRequest{UserId: UserID, Token: friendListRequest.Token})
+	// friendListResponse, err := friendListClient.RelationFriendList(context.Background(), &relationservice.DouYinRelationFriendListRequest{UserId: UserID, Token: friendListRequest.Token})
+	// 超时重试
+	var friendListResponse *relationservice.DouYinRelationFriendListResponse
+	for try := 0; try < MaxRetry; try++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		friendListResponse, err = friendListClient.RelationFriendList(ctx, &relationservice.DouYinRelationFriendListRequest{UserId: UserID, Token: friendListRequest.Token})
+		if err != nil {
+			if err == context.DeadlineExceeded {
+			  // 超时,可以重试继续
+			  continue
+			} else {
+			  // 其他错误,不重试
+			  break 
+			}   
+		}else {
+			break
+		}
+	}
+	
 	clientconnect.FriendListChan <- friendListClient
 
 	if (friendListResponse == nil) || (err != nil) {
