@@ -66,7 +66,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 					json.Unmarshal([]byte(videos[i]), &video)
 					if userId != -1 {
 						isFavorite := model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
-						isFollow := model.IsFollowed(&model.Follow{FollowerUserID: userId, FollowedUserID: video.Author.Id}, db)
+						isFollow := model.IsFollowed(&model.Follow{FollowerUserID: userId, FollowedUserID: video.Author.Id}, db) || userId == video.Author.Id
 						video.IsFavorite = isFavorite
 						video.Author.IsFollow = isFollow
 					}
@@ -124,7 +124,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 		var isFollow bool
 		if userId != -1 {
 			isFavorite = model.IsFavorited(&model.Favorite{UserID: userId, VideoID: video.Id}, db)
-			isFollow = model.IsFollowed(&model.Follow{FollowerUserID: userId, FollowedUserID: user.Id}, db)
+			isFollow = model.IsFollowed(&model.Follow{FollowerUserID: userId, FollowedUserID: user.Id}, db) || userId == user.Id
 		}
 		videoList = append(videoList, &Video{
 			Id: video.Id,
