@@ -152,6 +152,8 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 	var nextTime int64
 	if len(*videos) != 0 {
 		nextTime = (*videos)[len(*videos) - 1].PublishTime
+	}else {
+		nextTime = time.Now().Unix()
 	}
 	
 	if redisMiss {
