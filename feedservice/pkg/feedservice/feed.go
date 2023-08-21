@@ -61,7 +61,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 			}else {
 				var nextTime int64
 				var videoList []*Video
-				for i := 0; i < int(len); i++ {
+				for i := int(len) - 1; i >= 0; i-- {
 					var video Video
 					json.Unmarshal([]byte(videos[i]), &video)
 					if userId != -1 {
@@ -151,7 +151,7 @@ func (f *feedService) Feed(context context.Context, request *DouYinFeedRequest) 
 	}
 	var nextTime int64
 	if len(*videos) != 0 {
-		nextTime = (*videos)[0].PublishTime
+		nextTime = (*videos)[len(*videos) - 1].PublishTime
 	}
 	
 	if redisMiss {
