@@ -184,7 +184,7 @@ func MinusFollowCount(user *User, tx *gorm.DB) (*User, error) {
 		return nil, err
 	}
 
-	err = tx.Model(user).Update("follow_count", user.FollowCount - 1).Error
+	err = tx.Model(user).Update("follow_count", user.FollowerCount - 1).Error
 	if err != nil {
 		fmt.Println("减少关注总数失败：", err)
 		return nil, err
@@ -202,7 +202,7 @@ func AddFollowerCount(user *User, tx *gorm.DB) (*User, error) {
 		return nil, err
 	}
 
-	err = tx.Model(user).Update("follower_count", user.FollowCount + 1).Error
+	err = tx.Model(user).Update("follower_count", user.FollowerCount + 1).Error
 	if err != nil {
 		fmt.Println("增加粉丝总数失败：", err)
 		return nil, err

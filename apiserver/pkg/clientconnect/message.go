@@ -12,11 +12,12 @@ var MessageActionChan chan messageservice.MessageActionServiceClient
 var messageAddr = "message:8080"
 
 func init() {
-	conn, _ := grpc.Dial(messageAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	MessageChatChan = make(chan messageservice.MessageChatServiceClient, 10)
 	MessageActionChan = make(chan messageservice.MessageActionServiceClient, 10)
 	for i := 0; i < 10; i++ {
-		MessageChatChan <- messageservice.NewMessageChatServiceClient(conn)
-		MessageActionChan <- messageservice.NewMessageActionServiceClient(conn)
+		conn1, _ := grpc.Dial(messageAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn2, _ := grpc.Dial(messageAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		MessageChatChan <- messageservice.NewMessageChatServiceClient(conn1)
+		MessageActionChan <- messageservice.NewMessageActionServiceClient(conn2)
 	}
 }
