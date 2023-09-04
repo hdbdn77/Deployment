@@ -4,3 +4,4 @@
 ## 使用istio实现流量分发，与稳定性治理（限流与熔断）
 
 数据库设计文件在：\kubernetes-manifests\db_deploymnet\mysql
+涉及到部署的代码部分：如服务地址端口，以实际部署为准
