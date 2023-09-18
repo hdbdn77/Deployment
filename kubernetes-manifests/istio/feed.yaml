@@ -5,7 +5,7 @@ metadata:
   namespace: douyin
 spec:
   hosts:
-  - "*.feed.douyin.svc.cluster.local"
+  - "feed.douyin.svc.cluster.local"
   tcp:
   - match:
     - port: 8080
