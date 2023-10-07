@@ -49,28 +49,19 @@ func Register(user *User, tx *gorm.DB) (*User, error) {
 }
 
 func FindUserByUsername(user *User, tx *gorm.DB) (*User, error) {
-	// 迁移模型
-	tx.AutoMigrate(&User{})
-
 	// 查询
-	err := tx.Where("username = ?", user.Username).Take(&user).Error
+	err := tx.Model(&User{}).Where("username = ?", user.Username).Take(&user).Error
 	return user, err
 }
 
 func FindUserById(user *User, tx *gorm.DB) (*User, error) {
-	// 迁移模型
-	tx.AutoMigrate(&User{})
-
 	// 查询
-	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Model(&User{}).Where("id = ?", user.Id).Take(&user).Error
 	return user, err
 }
 
 func AddTotalFavorited(user *User, tx *gorm.DB) (*User, error) {
-	// 迁移模型
-	tx.AutoMigrate(&User{})
-
-	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Model(&User{}).Where("id = ?", user.Id).Take(&user).Error
 	if err != nil {
 		fmt.Println("增加获赞总数时查找用户失败：", err)
 		return nil, err
@@ -85,10 +76,7 @@ func AddTotalFavorited(user *User, tx *gorm.DB) (*User, error) {
 }
 
 func MinusTotalFavorited(user *User, tx *gorm.DB) (*User, error) {
-	// 迁移模型
-	tx.AutoMigrate(&User{})
-
-	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Model(&User{}).Where("id = ?", user.Id).Take(&user).Error
 	if err != nil {
 		fmt.Println("减少获赞总数时查找用户失败：", err)
 		return nil, err
@@ -103,10 +91,7 @@ func MinusTotalFavorited(user *User, tx *gorm.DB) (*User, error) {
 }
 
 func AddWorkCount(user *User, tx *gorm.DB) (*User, error) {
-	// 迁移模型
-	tx.AutoMigrate(&User{})
-
-	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Model(&User{}).Where("id = ?", user.Id).Take(&user).Error
 	if err != nil {
 		fmt.Println("更新作品总数时查找用户失败：", err)
 		return nil, err
@@ -121,10 +106,7 @@ func AddWorkCount(user *User, tx *gorm.DB) (*User, error) {
 }
 
 func AddUserFavoriteCount(user *User, tx *gorm.DB) (*User, error) {
-	// 迁移模型
-	tx.AutoMigrate(&User{})
-
-	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Model(&User{}).Where("id = ?", user.Id).Take(&user).Error
 	if err != nil {
 		fmt.Println("增加点赞总数时查找用户失败：", err)
 		return nil, err
@@ -139,10 +121,7 @@ func AddUserFavoriteCount(user *User, tx *gorm.DB) (*User, error) {
 }
 
 func MinusUserFavoriteCount(user *User, tx *gorm.DB) (*User, error) {
-	// 迁移模型
-	tx.AutoMigrate(&User{})
-
-	err := tx.Where("id = ?", user.Id).Take(&user).Error
+	err := tx.Model(&User{}).Where("id = ?", user.Id).Take(&user).Error
 	if err != nil {
 		fmt.Println("减少点赞总数时查找用户失败：", err)
 		return nil, err

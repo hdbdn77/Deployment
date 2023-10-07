@@ -26,9 +26,6 @@ func (Video) TableName() string {
 }
 
 func CreateVideo(video *Video, tx *gorm.DB) (*Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
 	// 创建
 	video.PublishTime = time.Now().Unix()
 	err := tx.Create(video).Error
@@ -36,40 +33,28 @@ func CreateVideo(video *Video, tx *gorm.DB) (*Video, error) {
 }
 
 func ListVideoByAuthorId(authorId int64, tx *gorm.DB) (*[]Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
 	//查询
 	var videos []Video
-	err := tx.Where("author_id = ?", authorId).Find(&videos).Error
+	err := tx.Model(&Video{}).Where("author_id = ?", authorId).Find(&videos).Error
 	return &videos, err
 
 }
 
 func GetVideoById(id int64, tx *gorm.DB) (*Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
 	var video Video
-	err := tx.Where("id = ?", id).Take(&video).Error
+	err := tx.Model(&Video{}).Where("id = ?", id).Take(&video).Error
 	return &video, err
 }
 
 func ListVideoByTime(time int64, tx *gorm.DB) (*[]Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
 	//查询
 	var videos []Video
-	err := tx.Where("publish_time < ?", time).Order("publish_time desc").Limit(30).Find(&videos).Error
+	err := tx.Model(&Video{}).Where("publish_time < ?", time).Order("publish_time desc").Limit(30).Find(&videos).Error
 	return &videos, err
 }
 
 func AddViseoFavoriteCount(video *Video, tx *gorm.DB) (*Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
-	err := tx.Where("id = ?", video.Id).Take(video).Error
+	err := tx.Model(&Video{}).Where("id = ?", video.Id).Take(video).Error
 	if err != nil {
 		fmt.Println("增加视频获赞总数时查找视频失败：", err)
 		return nil, err
@@ -83,10 +68,7 @@ func AddViseoFavoriteCount(video *Video, tx *gorm.DB) (*Video, error) {
 }
 
 func MinusViseoFavoriteCount(video *Video, tx *gorm.DB) (*Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
-	err := tx.Where("id = ?", video.Id).Take(video).Error
+	err := tx.Model(&Video{}).Where("id = ?", video.Id).Take(video).Error
 	if err != nil {
 		fmt.Println("减少视频获赞总数时查找视频失败：", err)
 		return nil, err
@@ -100,10 +82,7 @@ func MinusViseoFavoriteCount(video *Video, tx *gorm.DB) (*Video, error) {
 }
 
 func AddVideoCommentCount(video *Video, tx *gorm.DB) (*Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
-	err := tx.Where("id = ?", video.Id).Take(video).Error
+	err := tx.Model(&Video{}).Where("id = ?", video.Id).Take(video).Error
 	if err != nil {
 		fmt.Println("增加视频评论总数时查找视频失败：", err)
 		return nil, err
@@ -117,10 +96,7 @@ func AddVideoCommentCount(video *Video, tx *gorm.DB) (*Video, error) {
 }
 
 func MinusVideoCommentCount(video *Video, tx *gorm.DB) (*Video, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Video{})
-
-	err := tx.Where("id = ?", video.Id).Take(video).Error
+	err := tx.Model(&Video{}).Where("id = ?", video.Id).Take(video).Error
 	if err != nil {
 		fmt.Println("减少视频评论总数时查找视频失败：", err)
 		return nil, err

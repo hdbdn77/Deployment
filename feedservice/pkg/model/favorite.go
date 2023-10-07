@@ -41,38 +41,26 @@ func (f *Favorite) BeforeDelete(tx *gorm.DB) error {
 }
 
 func Favorited(favorite *Favorite, tx *gorm.DB) (*Favorite, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Favorite{})
-
 	// 创建
 	err := tx.Create(favorite).Error
 	return favorite, err
 }
 
 func Unfavorited(favorite *Favorite, tx *gorm.DB) (*Favorite, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Favorite{})
-
 	// 删除
-	tx.Where("user_id = ? AND video_id = ?", favorite.UserID, favorite.VideoID).Find(&favorite)
+	tx.Model(&Favorite{}).Where("user_id = ? AND video_id = ?", favorite.UserID, favorite.VideoID).Find(&favorite)
 	err := tx.Delete(favorite).Error
 	return favorite, err
 }
 
 func IsFavorited(favorite *Favorite, tx *gorm.DB) bool {
-	// 迁移模型
-	tx.AutoMigrate(&Favorite{})
-
 	var count int64
 	tx.Model(favorite).Where("user_id = ? AND video_id = ?", favorite.UserID, favorite.VideoID).Count(&count)
 	return count > 0
 }
 
 func GetFavoritesByUserID(userId int64, tx *gorm.DB) ([]*Favorite, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Favorite{})
-
 	var favorites []*Favorite
-	err := tx.Where("user_id = ?", userId).Find(&favorites).Error
+	err := tx.Model(&Favorite{}).Where("user_id = ?", userId).Find(&favorites).Error
 	return favorites, err
 }

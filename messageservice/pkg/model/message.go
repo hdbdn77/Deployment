@@ -22,9 +22,6 @@ func (Message) TableName() string {
 }
 
 func SendMessage(message *Message, tx *gorm.DB) (*Message, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Message{})
-
 	// 创建
 	message.CreateTime = time.Now().Unix()
 	err := tx.Create(message).Error
@@ -32,10 +29,7 @@ func SendMessage(message *Message, tx *gorm.DB) (*Message, error) {
 }
 
 func ListMessageByTime(message *Message, tx *gorm.DB) ([]*Message, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Message{})
-
 	var messages []*Message
-	err := tx.Where("chat_id = ? AND create_time > ?", message.ChatID, message.CreateTime).Find(&messages).Error
+	err := tx.Model(&Message{}).Where("chat_id = ? AND create_time > ?", message.ChatID, message.CreateTime).Find(&messages).Error
 	return messages, err
 }

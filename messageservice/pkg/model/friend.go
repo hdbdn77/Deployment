@@ -40,48 +40,33 @@ func (f *Friend) BeforeDelete(tx *gorm.DB) error {
 }
 
 func Friended(friend *Friend, tx *gorm.DB) (*Friend, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	// 创建
 	err := tx.Create(friend).Error
 	return friend, err
 }
 
 func Unfriended(friend *Friend, tx *gorm.DB) (*Friend, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	// 删除
-	tx.Where("id = ?", friend.Id).Find(&friend)
+	tx.Model(&Friend{}).Where("id = ?", friend.Id).Find(&friend)
 	err := tx.Delete(friend).Error
 	return friend, err
 }
 
 func FriendList(friendKey string, tx *gorm.DB) ([]*Friend, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	var friends []*Friend
-	err := tx.Where("id LIKE ?", "%"+ friendKey + "%").Find(&friends).Error
+	err := tx.Model(&Friend{}).Where("id LIKE ?", "%"+ friendKey + "%").Find(&friends).Error
 	return friends, err
 }
 
 func IsFriend(friend *Friend, tx *gorm.DB) bool {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	var count int64
 	tx.Model(friend).Where("id = ?", friend.Id).Count(&count)
 	return count > 0
 }
 
 func UpdateLatestMessage(friendKey string, fromUserID int64, toUserID int64, latestMessage string, tx *gorm.DB) (*Friend, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	var friend Friend
-	err := tx.Where("id = ?", friendKey).Take(&friend).Error
+	err := tx.Model(&Friend{}).Where("id = ?", friendKey).Take(&friend).Error
 	if err != nil {
 		fmt.Println("更新朋友最新消息时查找用户失败：", err)
 		return nil, err

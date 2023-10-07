@@ -40,29 +40,20 @@ func (f *Friend) BeforeDelete(tx *gorm.DB) error {
 }
 
 func Friended(friend *Friend, tx *gorm.DB) (*Friend, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	// 创建
 	err := tx.Create(friend).Error
 	return friend, err
 }
 
 func Unfriended(friend *Friend, tx *gorm.DB) (*Friend, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	// 删除
-	tx.Where("id = ?", friend.Id).Find(&friend)
+	tx.Model(&Friend{}).Where("id = ?", friend.Id).Find(&friend)
 	err := tx.Delete(friend).Error
 	return friend, err
 }
 
 func FriendList(friendKey string, tx *gorm.DB) ([]*Friend, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Friend{})
-
 	var friends []*Friend
-	err := tx.Where("id LIKE ?", "%"+ friendKey + "%").Find(&friends).Error
+	err := tx.Model(&Friend{}).Where("id LIKE ?", "%"+ friendKey + "%").Find(&friends).Error
 	return friends, err
 }

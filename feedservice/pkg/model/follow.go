@@ -39,47 +39,32 @@ func (f *Follow) BeforeDelete(tx *gorm.DB) error {
 }
 
 func Followed(follow *Follow, tx *gorm.DB) (*Follow, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Follow{})
-
 	// 创建
 	err := tx.Create(follow).Error
 	return follow, err
 }
 
 func Unfollowed(follow *Follow, tx *gorm.DB) (*Follow, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Follow{})
-
 	// 删除
-	tx.Where("follower_user_id = ? AND followed_user_id = ?", follow.FollowerUserID, follow.FollowedUserID).Find(&follow)
+	tx.Model(&Follow{}).Where("follower_user_id = ? AND followed_user_id = ?", follow.FollowerUserID, follow.FollowedUserID).Find(&follow)
 	err := tx.Delete(follow).Error
 	return follow, err
 }
 
 func IsFollowed(follow *Follow, tx *gorm.DB) bool {
-	// 迁移模型
-	tx.AutoMigrate(&Follow{})
-
 	var count int64
 	tx.Model(follow).Where("follower_user_id = ? AND followed_user_id = ?", follow.FollowerUserID, follow.FollowedUserID).Count(&count)
 	return count > 0
 }
 
 func FollowList(useID int64, tx *gorm.DB) ([]*Follow, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Follow{})
-
 	var followList []*Follow
-	err := tx.Where("follower_user_id = ?", useID).Find(&followList).Error
+	err := tx.Model(&Follow{}).Where("follower_user_id = ?", useID).Find(&followList).Error
 	return followList, err
 }
 
 func FollowerList(useID int64, tx *gorm.DB) ([]*Follow, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Follow{})
-
 	var followList []*Follow
-	err := tx.Where("followed_user_id = ?", useID).Find(&followList).Error
+	err := tx.Model(&Follow{}).Where("followed_user_id = ?", useID).Find(&followList).Error
 	return followList, err
 }

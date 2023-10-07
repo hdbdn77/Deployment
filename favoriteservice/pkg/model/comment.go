@@ -33,9 +33,6 @@ func (c *Comment) BeforeDelete(tx *gorm.DB) error {
 }
 
 func Commented(comment *Comment, tx *gorm.DB) (*Comment, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Comment{})
-
 	// 创建
 	comment.CreateDate = time.Now().Unix()
 	err := tx.Create(comment).Error
@@ -43,20 +40,14 @@ func Commented(comment *Comment, tx *gorm.DB) (*Comment, error) {
 }
 
 func UnCommented(comment *Comment, tx *gorm.DB) (*Comment, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Comment{})
-
 	// 删除
-	tx.Where("id = ?", comment.Id).Find(&comment)
+	tx.Model(&Comment{}).Where("id = ?", comment.Id).Find(&comment)
 	err := tx.Delete(comment).Error
 	return comment, err
 }
 
 func ListComment(comment *Comment, tx *gorm.DB) (*[]Comment, error) {
-	// 迁移模型
-	tx.AutoMigrate(&Comment{})
-
 	var comments []Comment
-	err := tx.Where("video_id = ?", comment.VideoID).Order("create_date desc").Find(&comments).Error
+	err := tx.Model(&Comment{}).Where("video_id = ?", comment.VideoID).Order("create_date desc").Find(&comments).Error
 	return &comments, err
 }
